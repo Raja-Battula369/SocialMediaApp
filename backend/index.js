@@ -1,7 +1,6 @@
 const DataBase = require('./DataBase/Db');
 const dotenv = require('dotenv');
 const app = require('./app');
-const { posts, users } = require('./data/index');
 const Post = require('./models/postsModel');
 const User = require('./models/userModel');
 
