@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "build": "npm install"
+    "build": "npm i bcrypt && npm i bcrypto && npm i body-parser && npm i cors && npm i dotenv && npm i express && npm i helmet && npm i jsonwebtoken && npm i mongoose && npm i morgan && npm i multer && npm i nodemon && npm i validator"
   },
   "author": "Raja B",
   "license": "ISC",
