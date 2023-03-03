@@ -14,7 +14,7 @@ const authRouter = require('./routers/authRouter');
 const { createPost } = require('./controller/postController');
 const { register } = require('./controller/authController');
 const globalErrorHandler = require('./controller/errorController');
-const AppError = require('./utils/appError');
+const { AppError } = require('./utils/appError');
 const { verifyToken } = require('./middleware/AuthMiddleware');
 
 const app = express();
