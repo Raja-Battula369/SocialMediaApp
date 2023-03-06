@@ -35,25 +35,24 @@ const Weather = () => {
 
   return (
     <>
-      <HStack maxW={'12rem'}>
-        <Image
-          src={
-            'https://openweathermap.org/img/w/' +
-            weather?.weather[0].icon +
-            '.png'
-          }
-          alt="weatherIcon"
-          maxW={'sm'}
-          objectFit="cover"
-        />
-        <Text fontSize={'small'} as="b">
-          {weather?.main.temp}°C
-        </Text>
-        <Text fontSize={'small'}>{weather?.name}</Text>
-      </HStack>
-      {/* <Button onClick={getCoor} variant="outline">
-        location
-      </Button> */}
+      {location !== null && (
+        <HStack maxW={'12rem'}>
+          <Image
+            src={
+              'https://openweathermap.org/img/w/' +
+              weather?.weather[0].icon +
+              '.png'
+            }
+            alt="weatherIcon"
+            maxW={'sm'}
+            objectFit="cover"
+          />
+          <Text fontSize={'small'} as="b">
+            {weather?.main.temp}°C
+          </Text>
+          <Text fontSize={'small'}>{weather?.name}</Text>
+        </HStack>
+      )}
     </>
   );
 };

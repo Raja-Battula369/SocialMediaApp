@@ -15,6 +15,7 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import {
   MdDarkMode,
   MdExpandMore,
@@ -31,17 +32,26 @@ import { setLogout } from '../State/State';
 const Navbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const [isNonMobile] = useMediaQuery('(min-width: 800px)');
+  const [Shadow, setShadow] = useState(null);
+
   const userName = useSelector((state) => state.user.firstName);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const handleScroll = () => setShadow(window.pageYOffset);
+    document.addEventListener('wheel', handleScroll);
+    return () => {
+      document.removeEventListener('wheel', handleScroll);
+    };
+  });
   return (
     <HStack
       maxW={'full'}
       px="2rem"
       py="1rem"
       justifyContent={'space-between'}
-      shadow="lg"
+      shadow={Shadow > 0 ? 'xl' : ''}
       pos={'sticky'}
       top={0}
       bg={colorMode === 'light' ? '#0accbc' : '#302c2c'}
