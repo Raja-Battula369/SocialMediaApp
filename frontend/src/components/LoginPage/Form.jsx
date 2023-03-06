@@ -77,6 +77,7 @@ const Form = () => {
       setIsLoading(false);
       if (data) setPageType('login');
     } catch (error) {
+      setIsLoading(false);
       setLoginError('Please Enter Unique Email');
     }
   };
@@ -102,6 +103,7 @@ const Form = () => {
         navigate('/home');
       }
     } catch (error) {
+      setIsLoading(false);
       setLoginError(error.response.data.message);
     }
   };
