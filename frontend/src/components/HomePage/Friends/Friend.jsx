@@ -1,4 +1,11 @@
-import { Avatar, Box, HStack, IconButton, Text } from '@chakra-ui/react';
+import {
+  Avatar,
+  Box,
+  HStack,
+  IconButton,
+  Text,
+  useColorMode,
+} from '@chakra-ui/react';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { MdOutlinePersonAdd, MdOutlinePersonRemove } from 'react-icons/md';
@@ -8,18 +15,18 @@ import { Link } from 'react-router-dom';
 
 const Friend = ({ friendId, name, subtitle, userPicturePath, userId }) => {
   const dispatch = useDispatch();
-
+  const { colorMode } = useColorMode();
   const token = useSelector((state) => state.token);
   const { friends, _id } = useSelector((state) => state.user);
 
   const isFriend = friends.find((friend) => friend._id === friendId);
 
-  const PicturePath = `http://localhost:8001/assets/${userPicturePath}`;
+  const PicturePath = `https://socialmediaapp-9air.onrender.com/assets/${userPicturePath}`;
 
   const patchFriend = async () => {
     try {
       const { data } = await axios.patch(
-        `http://localhost:8001/users/${_id}/${friendId}`,
+        `https://socialmediaapp-9air.onrender.com/users/${_id}/${friendId}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -55,6 +62,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, userId }) => {
       {_id !== userId && (
         <Box>
           <IconButton
+            bgColor={colorMode === 'light' ? '#98b0b5' : '#333c3d'}
             appearance={'none'}
             title={'person'}
             variant={'outline'}

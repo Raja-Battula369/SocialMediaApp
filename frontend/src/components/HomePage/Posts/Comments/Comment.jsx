@@ -12,10 +12,14 @@ const Comment = ({ id, message }) => {
 
   const commentsPersonId = async () => {
     try {
-      const { data } = await axios.get(`http://localhost:8001/users/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const pic = await `http://localhost:8001/assets/${data.picturePath}`;
+      const { data } = await axios.get(
+        `https://socialmediaapp-9air.onrender.com/users/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const pic =
+        await `https://socialmediaapp-9air.onrender.com/assets/${data.picturePath}`;
       setPicId(pic);
       setName(data.firstName);
     } catch (error) {

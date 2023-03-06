@@ -31,6 +31,8 @@ import { setError, setPosts } from '../../State/State';
 import FriendList from './Friends/FriendList';
 import Posts from './Posts/Posts';
 import Error from '../Error/Error';
+import { Link } from 'react-router-dom';
+import Weather from './Weather';
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -45,7 +47,7 @@ const Home = () => {
   const token = useSelector((state) => state.token);
   const status = useSelector((state) => state.error);
 
-  const PicturePath = `http://localhost:8001/assets/${picturePath}`;
+  const PicturePath = `https://socialmediaapp-9air.onrender.com/assets/${picturePath}`;
   const handlePost = async () => {
     isSetLoad(true);
 
@@ -58,7 +60,7 @@ const Home = () => {
     }
     try {
       const { data } = await axios.post(
-        'http://localhost:8001/posts',
+        'https://socialmediaapp-9air.onrender.com/posts',
         formData,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -77,9 +79,6 @@ const Home = () => {
       );
     }
   };
-  useEffect(() => {
-    console.log(status);
-  }, [status]);
 
   return (
     <Container maxW={'full'} bg={colorMode === 'light' ? '#bbecf0' : ''}>
@@ -88,7 +87,15 @@ const Home = () => {
       ) : (
         <Grid templateColumns={['', 'repeat(3,1fr)']}>
           {isNonMobile && (
-            <VStack gap="1rem" shadow="md" maxW="10rem" m="2rem 0" p="1rem">
+            <VStack
+              alignItems={'flex-start'}
+              gap="1rem"
+              shadow="md"
+              m="2rem 0"
+              p="1rem"
+              maxW={'15rem'}
+            >
+              <Weather />
               <HStack>
                 <IconButton
                   title="Home"
@@ -99,8 +106,12 @@ const Home = () => {
                 <Text as={'b'}>Home</Text>
               </HStack>
               <HStack>
-                <Avatar size={'sm'} src={PicturePath} />
-                <Text as={'b'}>Profile</Text>
+                <Link to={`/profile/${_id}`}>
+                  <Avatar size={'sm'} src={PicturePath} objectFit="cover" />
+                  <Text ml="0.5rem" as={'b'}>
+                    Profile
+                  </Text>
+                </Link>
               </HStack>
             </VStack>
           )}
@@ -123,7 +134,7 @@ const Home = () => {
               borderRadius={'1rem'}
             >
               <HStack w={'full'}>
-                <Avatar size={'md'} src={PicturePath} />
+                <Avatar size={'md'} src={PicturePath} objectFit="cover" />
                 <Input
                   title="addPost"
                   appearance={'none'}

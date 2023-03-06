@@ -31,7 +31,7 @@ const Profile = () => {
   const getUserData = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:8001/users/${userId}`,
+        `https://socialmediaapp-9air.onrender.com/users/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -48,7 +48,7 @@ const Profile = () => {
   const getUserPosts = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:8001/posts/${userId}/posts`,
+        `https://socialmediaapp-9air.onrender.com/posts/${userId}/posts`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -65,7 +65,7 @@ const Profile = () => {
   const patchFriend = async () => {
     try {
       const { data } = await axios.patch(
-        `http://localhost:8001/users/${userId}/${_id}`,
+        `https://socialmediaapp-9air.onrender.com/users/${userId}/${_id}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -106,7 +106,7 @@ const Profile = () => {
             >
               <Avatar
                 size={['lg', 'xl', '2xl']}
-                src={`http://localhost:8001/assets/${userData?.picturePath}`}
+                src={`https://socialmediaapp-9air.onrender.com/assets/${userData?.picturePath}`}
                 objectFit={'cover'}
               />
               <Box p={['0.5', '1rem']} maxW="full">
@@ -171,7 +171,7 @@ const Profile = () => {
                       m="0.4rem"
                       boxSize={['7rem', '12rem', '15rem', '18rem']}
                       objectFit="cover"
-                      src={`http://localhost:8001/assets/${data.picturePath}`}
+                      src={`https://socialmediaapp-9air.onrender.com/assets/${data.picturePath}`}
                     />
                   )}
                 </Box>

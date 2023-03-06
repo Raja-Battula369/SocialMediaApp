@@ -53,6 +53,7 @@ const Form = () => {
   const toast = useToast();
   const [loginError, setLoginError] = useState('');
   const [pageType, setPageType] = useState('login');
+  const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -67,11 +68,13 @@ const Form = () => {
     formData.append('picturePath', values.picture.name);
 
     try {
+      setIsLoading(true);
       const data = await axios.post(
-        'http://localhost:8001/auth/register',
+        'https://socialmediaapp-9air.onrender.com/auth/register',
         formData
       );
       onSubmitProps.resetForm();
+      setIsLoading(false);
       if (data) setPageType('login');
     } catch (error) {
       setLoginError('Please Enter Unique Email');
@@ -80,8 +83,9 @@ const Form = () => {
 
   const login = async (values, onSubmitProps) => {
     try {
+      setIsLoading(true);
       const { data } = await axios.post(
-        'http://localhost:8001/auth/login',
+        'https://socialmediaapp-9air.onrender.com/auth/login',
         values
       );
       dispatch(setError({ error: '' }));
@@ -94,7 +98,7 @@ const Form = () => {
             token: data.token,
           })
         );
-
+        setIsLoading(false);
         navigate('/home');
       }
     } catch (error) {
@@ -316,6 +320,7 @@ const Form = () => {
               </>
             )}
             <Button
+              isLoading={isLoading}
               maxWidth={'full'}
               appearance={'none'}
               title="submit"

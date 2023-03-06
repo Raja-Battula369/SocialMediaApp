@@ -12,7 +12,7 @@ const FriendList = ({ userId }) => {
   const getFriends = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:8001/users/${userId}/friends`,
+        `https://socialmediaapp-9air.onrender.com/users/${userId}/friends`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
