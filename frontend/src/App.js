@@ -14,7 +14,7 @@ function App() {
     <div className="App">
       <Router>
 
-        <Routes>
+        <Routes >
           <Route path='/' element={<LoginPage />} />
           <Route path='/home' element={isAuth ? <HomePage /> : <Navigate to="/" />} />
           <Route path='/profile/:userId' element={isAuth ? <Profile /> : <Navigate to="/" />} />

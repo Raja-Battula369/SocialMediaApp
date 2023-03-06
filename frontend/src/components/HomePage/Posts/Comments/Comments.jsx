@@ -40,7 +40,7 @@ const Comments = ({
   const [comments, setComments] = useState([]);
   const [isLoad, isSetLoad] = useState(false);
 
-  const [isNonMobile] = useMediaQuery('(min-width: 425px)');
+  const [isNonMobile] = useMediaQuery('(min-width: 500px)');
   const token = useSelector((state) => state.token);
   const { _id } = useSelector((state) => state.user);
 
@@ -76,7 +76,7 @@ const Comments = ({
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setComments(data.comments);
+      setComments(data?.comments);
       isSetLoad(false);
       setMsg('');
     } catch (error) {
@@ -107,7 +107,7 @@ const Comments = ({
           <ModalCloseButton appearance={'none'} />
           <ModalBody pb={6}>
             <SimpleGrid columns={['1', '1', '2']} gap="0.5rem">
-              {isNonMobile && (
+              {isNonMobile && picturePath && (
                 <Image
                   height={'100vh'}
                   w={['100vw', '100vw', '50vw']}

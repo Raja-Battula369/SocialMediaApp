@@ -23,6 +23,7 @@ const Profile = () => {
   const dispatch = useDispatch();
   const [userData, setUserData] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
+  const [isMyFrnd, setIsMyFrnd] = useState(null);
   const { colorMode } = useColorMode();
   const token = useSelector((state) => state.token);
   const status = useSelector((state) => state.error);
@@ -73,6 +74,9 @@ const Profile = () => {
       );
 
       dispatch(setFriends({ friends: data }));
+      const isFriend = await data.find((friend) => friend._id === _id);
+      const isFollow = isFriend !== undefined ? true : false;
+      setIsMyFrnd(isFollow);
     } catch (error) {
       dispatch(
         setError({
@@ -81,11 +85,17 @@ const Profile = () => {
       );
     }
   };
+
+  const getFollowData = async () => {
+    const isFriend = await friends.find((friend) => friend._id === userId);
+    const isFollow = isFriend !== undefined ? true : false;
+    setIsMyFrnd(isFollow);
+  };
   useEffect(() => {
     getUserData();
     getUserPosts();
+    getFollowData();
   }, []);
-  const isFriend = friends.find((friend) => friend._id === _id);
 
   return (
     <Container
@@ -122,7 +132,7 @@ const Profile = () => {
                       fontWeight={'bold'}
                       onClick={() => patchFriend()}
                     >
-                      {isFriend ? 'Following' : 'Follow'}
+                      {isMyFrnd ? 'Following' : 'Follow'}
                     </Button>
                   )}
                 </HStack>
