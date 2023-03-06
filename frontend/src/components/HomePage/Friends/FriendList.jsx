@@ -40,15 +40,18 @@ const FriendList = ({ userId }) => {
       p="1rem"
     >
       <Text as={'b'}>Friend list</Text>
-      {friends.map((friend, i) => (
-        <Friend
-          key={friend?._id + i}
-          friendId={friend?._id}
-          name={`${friend?.firstName} ${friend?.lastName}`}
-          subtitle={friend?.occupation}
-          userPicturePath={friend?.picturePath}
-        />
-      ))}
+      {friends.map(
+        (friend, i) =>
+          friend.firstName !== undefined && (
+            <Friend
+              key={friend?._id + i}
+              friendId={friend?._id}
+              name={`${friend?.firstName} ${friend?.lastName}`}
+              subtitle={friend?.occupation}
+              userPicturePath={friend?.picturePath}
+            />
+          )
+      )}
     </VStack>
   );
 };
