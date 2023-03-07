@@ -97,7 +97,7 @@ const Comments = ({
           icon={<MdChatBubbleOutline />}
           onClick={onOpen}
         />
-        <Text>{comments.length}</Text>
+        <Text>{comments?.length}</Text>
       </HStack>
 
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>

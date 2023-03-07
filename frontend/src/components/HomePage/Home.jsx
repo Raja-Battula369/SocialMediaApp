@@ -79,7 +79,7 @@ const Home = () => {
       );
     }
   };
-
+  console.log();
   return (
     <Container maxW={'full'} bg={colorMode === 'light' ? '#bbecf0' : ''}>
       {status ? (
