@@ -8,7 +8,7 @@ exports.createPost = catchAsync(async (req, res, next) => {
     const { userId, description, picturePath } = req.body;
     const user = await User.findById(userId);
     const originalName = picturePath;
-    const filename = originalName?.replace(/\s+/g, '_');
+    const filename = originalName !== undefined ? originalName.replace(/\s+/g, '_') : picturePath;
     const picture = filename;
     const newPost = await Post.create({
         userId: user._id,
