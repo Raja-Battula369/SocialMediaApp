@@ -23,7 +23,6 @@ const Posts = () => {
   useEffect(() => {
     getPosts();
   }, []);
-
   return (
     <Skeleton isLoaded={posts}>
       {posts.map(

@@ -36,7 +36,7 @@ import Weather from './Weather';
 
 const Home = () => {
   const dispatch = useDispatch();
-  const [isNonMobile] = useMediaQuery('(min-width: 800px)');
+  const [isNonMobile] = useMediaQuery('(min-width: 1000px)');
   const [image, setImage] = useState(null);
   const [isImage, isSetImage] = useState(false);
   const [post, setPost] = useState('');
@@ -79,7 +79,6 @@ const Home = () => {
       );
     }
   };
-  console.log();
   return (
     <Container maxW={'full'} bg={colorMode === 'light' ? '#bbecf0' : ''}>
       {status ? (
