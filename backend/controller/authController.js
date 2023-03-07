@@ -38,12 +38,16 @@ exports.register = catchAsync(async (req, res, next) => {
     const salt = await bcrypto.genSalt(12);
     const HashPassword = await bcrypto.hash(password, salt);
 
+    const originalName = picturePath;
+    const filename = originalName !== undefined ? originalName.replace(/\s+/g, '_') : picturePath;
+    const picture = filename;
+
     const user = await User.create({
         firstName: firstName,
         lastName: lastName,
         email: email,
         password: HashPassword,
-        picturePath: picturePath,
+        picturePath: picture,
         friends: friends,
         location: location,
         occupation: occupation,
