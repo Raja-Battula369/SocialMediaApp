@@ -46,7 +46,7 @@ const storage = multer.diskStorage({
         cb(null, 'public/assets');
     },
     filename: function (req, file, cb) {
-        cb(null, file.originalname);
+        cb(null, (file.originalname).split(' ').join(''));
     },
 
 
