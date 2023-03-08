@@ -93,7 +93,7 @@ const Post = ({
         {description}
       </Text>
       {picturePath && (
-        <AspectRatio minW={['full', '25rem', '25rem']} ratio={1 / 1.5}>
+        <AspectRatio minW={['85vw', '25rem', '25rem']} ratio={1 / 1.5}>
           <Image
             alt={picturePath}
             src={`https://socialmediaapp-9air.onrender.com/assets/${picturePath}`}

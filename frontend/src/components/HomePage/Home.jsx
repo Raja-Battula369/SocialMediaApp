@@ -246,7 +246,7 @@ const Home = () => {
                 </Button>
               </HStack>
             </VStack>
-            <VStack>
+            <VStack minW={'full'}>
               <Posts />
             </VStack>
           </VStack>
