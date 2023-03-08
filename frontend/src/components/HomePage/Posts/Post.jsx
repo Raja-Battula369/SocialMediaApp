@@ -36,7 +36,9 @@ const Post = ({
 
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
-  const isLiked = Boolean(likes[loggedInUserId]);
+  const isLiked = Boolean(
+    likes[loggedInUserId] ? likes[loggedInUserId] : false
+  );
   const likeCount = Object.keys(likes).length;
 
   const patchLikes = async () => {
