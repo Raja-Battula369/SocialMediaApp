@@ -133,7 +133,7 @@ const Comments = ({
                     userId={postUserId}
                   />
                   <Divider />
-                  {[...comments].reverse().map(({ id, message }, i) => (
+                  {[...comments]?.reverse()?.map(({ id, message }, i) => (
                     <Comment key={i + id} message={message} id={id} />
                   ))}
                 </VStack>

@@ -25,7 +25,7 @@ const Posts = () => {
   }, []);
   return (
     <Skeleton isLoaded={posts}>
-      {posts.map(
+      {posts?.map(
         ({
           _id,
           userId,
