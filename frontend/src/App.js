@@ -12,11 +12,11 @@ function App() {
 
   return (
     <div className="App">
-      <Router>
+      <Router ex>
 
         <Routes >
           <Route path='/' element={<LoginPage />} />
-          <Route path='/home' element={isAuth ? <HomePage /> : <Navigate to="/" />} />
+          <Route exact path='/home' element={isAuth ? <HomePage /> : <Navigate to="/" />} />
           <Route path='/profile/:userId' element={isAuth ? <Profile /> : <Navigate to="/" />} />
 
         </Routes>

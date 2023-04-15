@@ -49,7 +49,7 @@ const Comments = ({
     const updateMessage = { message: { id: _id, message: msg } };
     try {
       await axios.patch(
-        `https://socialmediaapp-9air.onrender.com/posts/${postId}/comments`,
+        `http://localhost:8001/posts/${postId}/comments`,
         updateMessage,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -71,7 +71,7 @@ const Comments = ({
   const getComments = async () => {
     try {
       const { data } = await axios.get(
-        `https://socialmediaapp-9air.onrender.com/posts/${postId}/post`,
+        `http://localhost:8001/posts/${postId}/post`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -110,8 +110,9 @@ const Comments = ({
               {isNonMobile && picturePath && (
                 <Image
                   height={'100vh'}
+                  alt={picturePath}
                   w={['100vw', '100vw', '50vw']}
-                  src={`https://socialmediaapp-9air.onrender.com/assets/${picturePath}`}
+                  src={picturePath}
                   objectFit={'cover'}
                 />
               )}

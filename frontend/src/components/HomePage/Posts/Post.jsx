@@ -44,7 +44,7 @@ const Post = ({
   const patchLikes = async () => {
     try {
       const { data } = await axios.patch(
-        `https://socialmediaapp-9air.onrender.com/posts/${postId}/like`,
+        `http://localhost:8001/posts/${postId}/like`,
         { userId: loggedInUserId },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -64,7 +64,7 @@ const Post = ({
   const handleDelete = async () => {
     try {
       const { data } = await axios.delete(
-        `https://socialmediaapp-9air.onrender.com/posts/${postId}/deletepost`,
+        `http://localhost:8001/posts/${postId}/deletepost`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -94,11 +94,7 @@ const Post = ({
       </Text>
       {picturePath && (
         <AspectRatio minW={['85vw', '25rem', '25rem']} ratio={1 / 1.5}>
-          <Image
-            alt={picturePath}
-            src={`https://socialmediaapp-9air.onrender.com/assets/${picturePath}`}
-            objectFit="cover"
-          />
+          <Image alt={picturePath} src={picturePath} objectFit="cover" />
         </AspectRatio>
       )}
 

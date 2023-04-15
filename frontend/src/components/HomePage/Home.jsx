@@ -13,7 +13,7 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   MdDeleteOutline,
   MdHome,
@@ -47,7 +47,6 @@ const Home = () => {
   const token = useSelector((state) => state.token);
   const status = useSelector((state) => state.error);
 
-  const PicturePath = `https://socialmediaapp-9air.onrender.com/assets/${picturePath}`;
   const handlePost = async () => {
     isSetLoad(true);
 
@@ -60,7 +59,7 @@ const Home = () => {
     }
     try {
       const { data } = await axios.post(
-        'https://socialmediaapp-9air.onrender.com/posts',
+        'http://localhost:8001/posts',
         formData,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -80,7 +79,12 @@ const Home = () => {
     }
   };
   return (
-    <Container maxW={'full'} bg={colorMode === 'light' ? '#bbecf0' : ''}>
+    <Container
+      maxW={'full'}
+      h="100vh"
+      sx={{ border: '1px solid red' }}
+      bg={colorMode === 'light' ? '#bbecf0' : ''}
+    >
       {status ? (
         <Error />
       ) : (
@@ -106,7 +110,7 @@ const Home = () => {
               </HStack>
               <HStack>
                 <Link to={`/profile/${_id}`}>
-                  <Avatar size={'sm'} src={PicturePath} objectFit="cover" />
+                  <Avatar size={'sm'} src={picturePath} objectFit="cover" />
                   <Text ml="0.5rem" as={'b'}>
                     Profile
                   </Text>
@@ -133,7 +137,7 @@ const Home = () => {
               borderRadius={'1rem'}
             >
               <HStack w={'full'}>
-                <Avatar size={'md'} src={PicturePath} objectFit="cover" />
+                <Avatar size={'md'} src={picturePath} objectFit="cover" />
                 <Input
                   title="addPost"
                   appearance={'none'}
@@ -164,9 +168,11 @@ const Home = () => {
                         p="1rem"
                         sx={{ '&:hover': { cursor: 'pointer' } }}
                       >
-                        <Input
+                        <input
+                          type={'file'}
                           appearance={'none'}
                           title="addImage"
+                          accept=".jpg,.jpeg"
                           {...getInputProps()}
                         />
                         <HStack justifyContent={'space-between'}>

@@ -65,12 +65,14 @@ const Form = () => {
     for (let value in values) {
       formData.append(value, values[value]);
     }
-    formData.append('picturePath', values.picture.name);
+    // formData.append('picturePath', values.picture);
+
+    console.log(...formData);
 
     try {
       setIsLoading(true);
       const data = await axios.post(
-        'https://socialmediaapp-9air.onrender.com/auth/register',
+        'http://localhost:8001/auth/register',
         formData
       );
       onSubmitProps.resetForm();
@@ -79,6 +81,7 @@ const Form = () => {
     } catch (error) {
       setIsLoading(false);
       setLoginError('Please Enter Unique Email');
+      console.log(error);
     }
   };
 
@@ -86,7 +89,7 @@ const Form = () => {
     try {
       setIsLoading(true);
       const { data } = await axios.post(
-        'https://socialmediaapp-9air.onrender.com/auth/login',
+        'http://localhost:8001/auth/login',
         values
       );
       dispatch(setError({ error: '' }));
@@ -235,6 +238,8 @@ const Form = () => {
                         sx={{ '&:hover': { cursor: 'pointer' } }}
                       >
                         <input
+                          type="file"
+                          accept="image/apng, image/jpg, image/gif, image/jpeg, image/png, image/svg+xml, image/webp"
                           appearance={'none'}
                           title="input"
                           {...getInputProps()}
