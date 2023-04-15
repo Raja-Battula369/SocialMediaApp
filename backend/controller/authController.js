@@ -3,7 +3,27 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const { AppError } = require('../appError');
+require("dotenv").config();
+const cloudinary = require('cloudinary').v2;
 
+// Configuration 
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET,
+});
+// Upload
+const handleUpload = async (file) => {
+    const random = Math.floor(Math.random() * 10000)
+    try {
+        const res = await cloudinary.uploader.upload(file.path, { public_id: `${file.filename}+${random}` })
+        return res;
+    } catch (err) {
+        console.log(err);
+    }
+
+
+}
 
 
 const signToken = id => {
@@ -33,21 +53,17 @@ const createToken = (user, statusCode, res) => {
 }
 exports.register = catchAsync(async (req, res, next) => {
 
-    const { firstName, lastName, email, password, picturePath, friends, location, occupation, } = req.body
+    const { firstName, lastName, email, password, friends, location, occupation, } = req.body
 
     const salt = await bcrypto.genSalt(12);
     const HashPassword = await bcrypto.hash(password, salt);
-
-    const originalName = picturePath;
-    const filename = originalName !== undefined ? originalName.replace(/\s+/g, '_') : picturePath;
-    const picture = filename;
-
+    const cloudRes = await handleUpload(req.file);
     const user = await User.create({
         firstName: firstName,
         lastName: lastName,
         email: email,
         password: HashPassword,
-        picturePath: picture,
+        picturePath: cloudRes.url,
         friends: friends,
         location: location,
         occupation: occupation,

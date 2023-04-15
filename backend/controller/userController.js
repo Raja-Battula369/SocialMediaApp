@@ -1,4 +1,3 @@
-
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 
@@ -53,5 +52,3 @@ exports.addRemoveFriend = catchAsync(async (req, res, next) => {
 
     res.status(200).json(friends);
 });
-
-
