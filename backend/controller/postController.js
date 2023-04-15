@@ -74,8 +74,8 @@ exports.getFeedPosts = catchAsync(async (req, res, next) => {
 exports.getPost = catchAsync(async (req, res, next) => {
     const { id } = req.params;
     console.log(id);
-    // const post = await Post.findById(id, { password: 0, email: 0 });
-    // res.status(200).json(post);
+    const post = await Post.findById(id, { password: 0, email: 0 });
+    res.status(200).json(post);
 
 });
 exports.getUserPosts = catchAsync(async (req, res, next) => {

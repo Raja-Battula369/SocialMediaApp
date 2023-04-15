@@ -32,6 +32,7 @@ const Comments = ({
   userPicturePath,
   picturePath,
   postUserId,
+  CommentS,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const dispatch = useDispatch();
@@ -80,12 +81,13 @@ const Comments = ({
       isSetLoad(false);
       setMsg('');
     } catch (error) {
+      isSetLoad(false);
       console.log(error);
     }
   };
   useEffect(() => {
     getComments();
-  }, []);
+  }, [msg]);
   return (
     <Container>
       <HStack>
@@ -140,8 +142,7 @@ const Comments = ({
                 </VStack>
                 <HStack m="1rem">
                   <Input
-                    pattern="^[\u0020-\u007E\u00A0-\u00FF\u0100-\u017F\u0180-\u024F\u2000-\u206F\u20A0-\u20CF\u2100-\u214F\u2200-\u22FF\u2300-\u23FF\u2460-\u24FF\u2500-\u257F\u2580-\u259F\u25A0-\u25FF\u2600-\u26FF\u27C0-\u27EF\u2900-\u297F\u2B00-\u2BFF\u2C60-\u2C7F\u2E00-\u2E7F\u3000-\u303F\u3040-\u309F\u30A0-\u30FF\u3100-\u312F\u3130-\u318F\u3190-\u319F\u31A0-\u31BF\u31C0-\u31EF\u31F0-\u31FF\u3200-\u32FF\u3300-\u33FF\u3400-\u4DBF\u4E00-\u9FFF\uA000-\uA48F\uA490-\uA4CF\uA960-\uA97F\uAC00-\uD7AF\uD800-\uDB7F\uDC00-\uDFFF\uE000-\uF8FF\uF900-\uFAFF\uFE00-\uFE0F\uFE10-\uFE1F\uFE30-\uFE4F\uFE50-\uFE6F\uFE70-\uFEFF\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDE4F\uDE80-\uDEFF]|\uD83E[\uDD00-\uDDFF]]*$"
-                    title="comm"
+                    title="commment"
                     appearance={'none'}
                     placeholder="Add comment"
                     value={msg}

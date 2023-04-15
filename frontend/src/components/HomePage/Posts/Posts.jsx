@@ -48,7 +48,7 @@ const Posts = () => {
             picturePath={picturePath}
             userPicturePath={userPicturePath}
             likes={likes}
-            comments={comments}
+            CommentS={comments}
             feed={getPosts}
           />
         )

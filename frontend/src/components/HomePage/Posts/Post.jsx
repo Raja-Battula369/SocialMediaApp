@@ -29,8 +29,8 @@ const Post = ({
   picturePath,
   userPicturePath,
   likes,
-  comments,
   feed,
+  comments,
 }) => {
   const dispatch = useDispatch();
 
@@ -44,7 +44,7 @@ const Post = ({
   const patchLikes = async () => {
     try {
       const { data } = await axios.patch(
-        `https://socialmediaapp-9air.onrender.com/${postId}/like`,
+        `https://socialmediaapp-9air.onrender.com/posts/${postId}/like`,
         { userId: loggedInUserId },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -64,7 +64,7 @@ const Post = ({
   const handleDelete = async () => {
     try {
       const { data } = await axios.delete(
-        `https://socialmediaapp-9air.onrender.com/${postId}/deletepost`,
+        `https://socialmediaapp-9air.onrender.com/posts/${postId}/deletepost`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -119,7 +119,7 @@ const Post = ({
             picturePath={picturePath}
             name={name}
             userPicturePath={userPicturePath}
-            comments={comments}
+            CommentS={comments}
             postUserId={postUserId}
           />
         </HStack>

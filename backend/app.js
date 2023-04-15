@@ -33,7 +33,7 @@ app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 app.use(morgan('common'));
 app.use(bodyParser.json({ limit: '100mb', extended: true }));
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
-app.use(cors());
+app.use(cors({ credentials: true, origin: 'https://metamates36.onrender.com' }));
 
 app.use('/assets', express.static(path.join(__dirname, '/public/assets')));
 
