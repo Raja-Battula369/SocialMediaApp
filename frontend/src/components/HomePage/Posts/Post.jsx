@@ -44,7 +44,7 @@ const Post = ({
   const patchLikes = async () => {
     try {
       const { data } = await axios.patch(
-        `http://localhost:8001/posts/${postId}/like`,
+        `https://socialmediaapp-9air.onrender.com/${postId}/like`,
         { userId: loggedInUserId },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -64,7 +64,7 @@ const Post = ({
   const handleDelete = async () => {
     try {
       const { data } = await axios.delete(
-        `http://localhost:8001/posts/${postId}/deletepost`,
+        `https://socialmediaapp-9air.onrender.com/${postId}/deletepost`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

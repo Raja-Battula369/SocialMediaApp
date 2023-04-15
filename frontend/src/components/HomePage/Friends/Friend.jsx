@@ -26,7 +26,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, userId }) => {
   const patchFriend = async () => {
     try {
       const { data } = await axios.patch(
-        `http://localhost:8001/users/${_id}/${friendId}`,
+        `https://socialmediaapp-9air.onrender.com/${friendId}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

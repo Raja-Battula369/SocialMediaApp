@@ -32,7 +32,7 @@ const Profile = () => {
   const getUserData = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:8001/users/${userId}`,
+        `https://socialmediaapp-9air.onrender.com/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -49,7 +49,7 @@ const Profile = () => {
   const getUserPosts = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:8001/posts/${userId}/posts`,
+        `https://socialmediaapp-9air.onrender.com/posts/${userId}/posts`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -66,7 +66,7 @@ const Profile = () => {
   const patchFriend = async () => {
     try {
       const { data } = await axios.patch(
-        `http://localhost:8001/users/${userId}/${_id}`,
+        `https://socialmediaapp-9air.onrender.com/users/${userId}/${_id}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

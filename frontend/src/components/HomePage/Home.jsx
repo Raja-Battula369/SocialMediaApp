@@ -59,7 +59,7 @@ const Home = () => {
     }
     try {
       const { data } = await axios.post(
-        'http://localhost:8001/posts',
+        'https://socialmediaapp-9air.onrender.com/posts',
         formData,
         {
           headers: { Authorization: `Bearer ${token}` },

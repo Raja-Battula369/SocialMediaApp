@@ -72,7 +72,7 @@ const Form = () => {
     try {
       setIsLoading(true);
       const data = await axios.post(
-        'http://localhost:8001/auth/register',
+        'https://socialmediaapp-9air.onrender.com/auth/register',
         formData
       );
       onSubmitProps.resetForm();
@@ -89,7 +89,7 @@ const Form = () => {
     try {
       setIsLoading(true);
       const { data } = await axios.post(
-        'http://localhost:8001/auth/login',
+        'https://socialmediaapp-9air.onrender.com/login',
         values
       );
       dispatch(setError({ error: '' }));

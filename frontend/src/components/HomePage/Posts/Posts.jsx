@@ -11,9 +11,12 @@ const Posts = () => {
   const token = useSelector((state) => state.token);
 
   const getPosts = async () => {
-    const { data } = await axios.get(`http://localhost:8001/posts`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const { data } = await axios.get(
+      `https://socialmediaapp-9air.onrender.com/posts`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     dispatch(setPosts({ posts: data }));
   };
 
