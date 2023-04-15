@@ -67,8 +67,6 @@ const Form = () => {
     }
     // formData.append('picturePath', values.picture);
 
-    console.log(...formData);
-
     try {
       setIsLoading(true);
       const data = await axios.post(
@@ -89,7 +87,7 @@ const Form = () => {
     try {
       setIsLoading(true);
       const { data } = await axios.post(
-        'https://socialmediaapp-9air.onrender.com/login',
+        'https://socialmediaapp-9air.onrender.com/auth/login',
         values
       );
       dispatch(setError({ error: '' }));

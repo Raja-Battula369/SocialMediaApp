@@ -243,7 +243,7 @@ const Home = () => {
                   appearance={'none'}
                   isLoading={isLoad}
                   fontSize={'smaller'}
-                  isDisabled={!post}
+                  isDisabled={post && image ? false : true}
                   onClick={handlePost}
                   bgColor={colorMode === 'light' ? '#3fe8eb' : '#e81328'}
                   borderRadius={'0.2rem'}

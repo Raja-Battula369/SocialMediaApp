@@ -49,7 +49,7 @@ const Comments = ({
     const updateMessage = { message: { id: _id, message: msg } };
     try {
       await axios.patch(
-        `https://socialmediaapp-9air.onrender.com/${postId}/comments`,
+        `https://socialmediaapp-9air.onrender.com/posts/${postId}/comments`,
         updateMessage,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -71,7 +71,7 @@ const Comments = ({
   const getComments = async () => {
     try {
       const { data } = await axios.get(
-        `https://socialmediaapp-9air.onrender.com/${postId}/post`,
+        `https://socialmediaapp-9air.onrender.com/posts/${postId}/post`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
