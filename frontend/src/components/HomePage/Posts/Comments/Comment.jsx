@@ -13,7 +13,7 @@ const Comment = ({ id, message }) => {
   const commentsPersonId = async () => {
     try {
       const { data } = await axios.get(
-        `https://socialmediaapp-9air.onrender.com/posts/${id}`,
+        `https://socialmediaapp-9air.onrender.com/users/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
