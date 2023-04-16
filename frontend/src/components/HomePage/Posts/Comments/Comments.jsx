@@ -87,7 +87,7 @@ const Comments = ({
   };
   useEffect(() => {
     getComments();
-  }, [msg]);
+  }, []);
   return (
     <Container>
       <HStack>
