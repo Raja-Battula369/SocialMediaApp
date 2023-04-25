@@ -1,6 +1,6 @@
 import axios from 'axios';
-import React from 'react';
-const Url = 'http://localhost:8001';
+
+const Url = 'https://socialmediaapp-9air.onrender.com';
 //post fetch
 const RouterFetchForPost = async (path, values, headers = '') => {
   const { data } = await axios.post(`${Url}${path}`, values, {

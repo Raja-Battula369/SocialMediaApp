@@ -29,7 +29,7 @@ function App() {
           <QueryClientProvider client={queryClient}>
             <Routes>
 
-              <Route path='/' element={<LoginPage />} />
+              <Route path='/' element={isAuth ? (<HomePage />) : (<LoginPage />)} />
               <Route exact path='/home' element={isAuth ? <HomePage /> : <Navigate to="/" />} />
               <Route path='/profile/:userId' element={isAuth ? <Profile /> : <Navigate to="/" />} />
 
