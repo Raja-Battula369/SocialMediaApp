@@ -5,20 +5,24 @@ import {
   Image,
   Text,
   VStack,
+  useToast,
 } from '@chakra-ui/react';
-import axios from 'axios';
-import React from 'react';
+import React, { lazy, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setPost } from '../../../State/State';
-import Friend from '../Friends/Friend';
 import {
   MdDeleteOutline,
   MdFavoriteBorder,
   MdOutlineFavorite,
   MdShare,
 } from 'react-icons/md';
-import { setError } from '../../../State/State';
-import Comments from './Comments/Comments';
+import {
+  RouterFetchForDelete,
+  RouterFetchForPatch,
+} from '../../../RouterFeatch';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+const Friend = lazy(() => import('../Friends/Friend'));
+const Comments = lazy(() => import('./Comments/Comments'));
 
 const Post = ({
   postId,
@@ -29,11 +33,11 @@ const Post = ({
   picturePath,
   userPicturePath,
   likes,
-  feed,
   comments,
 }) => {
   const dispatch = useDispatch();
-
+  const queryClient = useQueryClient();
+  const toast = useToast();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
   const isLiked = Boolean(
@@ -41,44 +45,73 @@ const Post = ({
   );
   const likeCount = Object.keys(likes).length;
 
-  const patchLikes = async () => {
-    try {
-      const { data } = await axios.patch(
-        `https://socialmediaapp-9air.onrender.com/posts/${postId}/like`,
-        { userId: loggedInUserId },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      dispatch(setPost({ post: data }));
-    } catch (error) {
-      dispatch(
-        setError({
-          error: error.response.data.message,
-        })
-      );
-    }
+  const patchLikes = () => {
+    PatchLikeHandler.mutate();
   };
+
+  const PatchLikeHandler = useMutation(
+    async () => {
+      try {
+        const data = await RouterFetchForPatch(
+          `/posts/${postId}/like`,
+          { userId: loggedInUserId },
+          `Bearer ${token}`
+        );
+        return data;
+      } catch (error) {
+        dispatch(
+          import('../../../State/State').then((state) =>
+            state.setError({
+              error: error.response.data.message,
+            })
+          )
+        );
+        console.log(error);
+      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['PostsGet']);
+        // queryClient.refetchQueries('PostsGet', { force: true });
+      },
+    }
+  );
 
   const handleDelete = async () => {
-    try {
-      const { data } = await axios.delete(
-        `https://socialmediaapp-9air.onrender.com/posts/${postId}/deletepost`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      dispatch(setPost({ post: data }));
-      feed();
-    } catch (error) {
-      dispatch(
-        setError({
-          error: error.response.data.message,
-        })
-      );
-    }
+    DeletePostHandler.mutate();
   };
+  const DeletePostHandler = useMutation(
+    async () => {
+      try {
+        const data = await RouterFetchForDelete(
+          `/posts/${postId}/deletepost`,
+          `Bearer ${token}`
+        );
+
+        toast({
+          title: 'Post deleted',
+          status: 'info',
+          isClosable: true,
+        });
+        return data;
+      } catch (error) {
+        dispatch(
+          import('../../../State/State').then((state) =>
+            state.setError({
+              error: error.response.data.message,
+            })
+          )
+        );
+      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['PostsGet']);
+        // queryClient.refetchQueries('PostsGet', { force: true });
+      },
+    }
+  );
+
   return (
     <VStack m="1.5rem 0" shadow={'sm'} minW="full" p="1rem">
       <Friend
@@ -146,4 +179,4 @@ const Post = ({
   );
 };
 
-export default Post;
+export default memo(Post);

@@ -7,3 +7,37 @@
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
+
+.bg-text {
+  min-height: 100vh;
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  /* background-color: rgba(255, 255, 255, 0.767); */
+  border-radius: 12px;
+  border: 1px solid rgba(213, 217, 223, 0.3);
+}
+
+.Home-card {
+  backdrop-filter: blur(16px) saturate(181%);
+  -webkit-backdrop-filter: blur(16px) saturate(181%);
+  background-color: rgba(17, 25, 40, 0.28);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.125);
+  height: 100vh;
+}
+
+.login-card-bg {
+  background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1124&q=100');
+  background-position: center;
+}
+.login-card {
+  backdrop-filter: blur(9px) saturate(181%);
+  -webkit-backdrop-filter: blur(9px) saturate(181%);
+  background-color: rgba(17, 25, 40, 0.28);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+.add {
+  margin: 100px;
+}

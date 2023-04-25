@@ -54,7 +54,7 @@ const Navbar = () => {
       shadow={Shadow > 0 ? 'xl' : ''}
       pos={'sticky'}
       top={0}
-      bg={colorMode === 'light' ? '#0accbc' : '#302c2c'}
+      bg={colorMode === 'light' ? 'white' : 'black'}
       zIndex={99}
     >
       <Text

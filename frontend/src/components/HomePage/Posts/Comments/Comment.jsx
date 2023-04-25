@@ -1,48 +1,44 @@
 import { Avatar, Box, HStack, Text } from '@chakra-ui/react';
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setError } from '../../../../State/State';
+import { RouterFetchForGet } from '../../../../RouterFeatch';
+import { useQuery } from '@tanstack/react-query';
 
 const Comment = ({ id, message }) => {
-  const [name, setName] = useState('');
-  const [picId, setPicId] = useState(null);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
+  const [data, setData] = useState([]);
 
   const commentsPersonId = async () => {
     try {
-      const { data } = await axios.get(
-        `https://socialmediaapp-9air.onrender.com/users/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const pic = data.picturePath;
-      setPicId(pic);
-      setName(data.firstName);
+      const data = await RouterFetchForGet(`/users/${id}`, `Bearer ${token}`);
+      setData(data);
     } catch (error) {
       dispatch(
-        setError({
-          error: error.response.data.message,
-        })
+        import('../../../../State/State').then((state) =>
+          state.setError({
+            error: error.response.data.message,
+          })
+        )
       );
       console.log(error);
     }
   };
+
+  // const { data } = useQuery(['commentOfThePerson'], commentsPersonId);
   useEffect(() => {
     commentsPersonId();
   }, []);
 
   return (
     <HStack w={'full'} alignItems="flex-start" p="0.5rem">
-      <Avatar size={'sm'} src={picId} />
+      <Avatar size={'sm'} src={data?.picturePath} />
       <Box>
-        <Text as={'b'}>{name}</Text>
+        <Text as={'b'}>{data?.firstName}</Text>
         <Text minW={'95%'}>{message}</Text>
       </Box>
     </HStack>
   );
 };
 
-export default Comment;
+export default memo(Comment);

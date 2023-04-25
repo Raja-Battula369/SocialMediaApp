@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  color,
   FormControl,
   FormErrorMessage,
   HStack,
@@ -10,15 +11,15 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
-import axios from 'axios';
 import { setError, setLogin } from '../../State/State';
 import { Formik } from 'formik';
 import Dropzone from 'react-dropzone';
 import { MdOutlineModeEdit } from 'react-icons/md';
+import RouterFetchForPost from '../../RouterFeatch';
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required('required'),
@@ -69,10 +70,7 @@ const Form = () => {
 
     try {
       setIsLoading(true);
-      const data = await axios.post(
-        'https://socialmediaapp-9air.onrender.com/auth/register',
-        formData
-      );
+      const data = await RouterFetchForPost('/auth/register', formData);
       onSubmitProps.resetForm();
       setIsLoading(false);
       if (data) setPageType('login');
@@ -83,16 +81,16 @@ const Form = () => {
     }
   };
 
-  const login = async (values, onSubmitProps) => {
+  const login = async (values, onSubmitProps = '') => {
     try {
       setIsLoading(true);
-      const { data } = await axios.post(
-        'https://socialmediaapp-9air.onrender.com/auth/login',
-        values
-      );
-      dispatch(setError({ error: '' }));
+      const data = await RouterFetchForPost('/auth/login', values);
 
-      onSubmitProps.resetForm();
+      dispatch(setError({ error: '' }));
+      if (onSubmitProps) {
+        onSubmitProps.resetForm();
+      }
+
       if (data) {
         dispatch(
           setLogin({
@@ -114,20 +112,28 @@ const Form = () => {
     if (isRegister) await registerPage(values, onSubmitProps);
   };
 
-  useEffect(() => {
-    if (loginError) {
-      setTimeout(
-        () =>
-          toast({
-            title: loginError,
-            status: 'error',
-            isClosable: true,
-          }),
-        150
-      );
-    }
-    return setLoginError('');
+  const handleGuestLogin = () => {
+    const values = { email: 'raja@2.com', password: 'raja' };
+    return login(values);
+  };
+  const ErrorHandler = useCallback(() => {
+    const setTimeoutId = setTimeout(
+      () =>
+        toast({
+          title: loginError,
+          status: 'error',
+          isClosable: true,
+        }),
+      150
+    );
+
+    setLoginError('');
+    return () => clearTimeout(setTimeoutId);
   }, [loginError]);
+
+  if (loginError) {
+    ErrorHandler();
+  }
 
   return (
     <Formik
@@ -146,10 +152,14 @@ const Form = () => {
         resetForm,
       }) => (
         <form onSubmit={handleSubmit}>
-          <VStack gap={'1rem'} shadow="md" p="1rem" borderRadius={'3rem'}>
+          <VStack gap={'1rem'} shadow="md" p="1rem" className="login-card">
             {isRegister && (
               <>
-                <SimpleGrid columns={{ sm: 1, md: 2 }} spacing={10}>
+                <SimpleGrid
+                  columns={{ sm: 1, md: 2 }}
+                  spacing={10}
+                  color={'white'}
+                >
                   <FormControl
                     isInvalid={touched.firstName && errors.firstName}
                   >
@@ -157,7 +167,6 @@ const Form = () => {
                       appearance={'none'}
                       title="firstName"
                       type={'text'}
-                      value={values?.firstName}
                       onChange={handleChange}
                       onBlur={handleBlur}
                       name="firstName"
@@ -173,7 +182,6 @@ const Form = () => {
                       appearance={'none'}
                       title="lastName"
                       type={'text'}
-                      value={values?.lastName}
                       onChange={handleChange}
                       onBlur={handleBlur}
                       name="lastName"
@@ -190,7 +198,6 @@ const Form = () => {
                     appearance={'none'}
                     title="loc"
                     type={'text'}
-                    value={values?.location}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     name="location"
@@ -208,7 +215,6 @@ const Form = () => {
                     appearance={'none'}
                     title="occ"
                     type={'text'}
-                    value={values?.occupation}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     name="occupation"
@@ -223,6 +229,7 @@ const Form = () => {
                   <Dropzone
                     acceptedFiles=".jpg,.jpeg,.png"
                     multiple={false}
+                    accept={{ 'image/*': [] }}
                     onDrop={(acceptedFiles) =>
                       setFieldValue('picture', acceptedFiles[0])
                     }
@@ -261,7 +268,6 @@ const Form = () => {
                     appearance={'none'}
                     title="email"
                     type={'email'}
-                    value={values?.email}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     name="email"
@@ -277,7 +283,6 @@ const Form = () => {
                     appearance={'none'}
                     title="pass"
                     type={'password'}
-                    value={values?.password}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     name="password"
@@ -296,7 +301,6 @@ const Form = () => {
                     appearance={'none'}
                     title="email1"
                     type={'email'}
-                    value={values?.email}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     name="email"
@@ -312,7 +316,6 @@ const Form = () => {
                     appearance={'none'}
                     title="pass2"
                     type={'password'}
-                    value={values?.password}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     name="password"
@@ -333,19 +336,43 @@ const Form = () => {
             >
               {isLogin ? 'LOGIN' : 'REGISTER'}
             </Button>
-            <Text
-              textDecoration={'underline'}
-              sx={{ '&:hover': { cursor: 'pointer', opacity: 0.6 } }}
-              fontSize={['0.5rem', '0.5rem', '0.7rem']}
-              onClick={() => {
-                setPageType(isLogin ? 'register' : 'login');
-                resetForm();
-              }}
+            <Button
+              onClick={handleGuestLogin}
+              w="full"
+              variant={'unstyled'}
+              border={'1px solid black'}
+              color={'white'}
+              bgColor={'black'}
             >
-              {isLogin
-                ? "Don't have an account? Sign Up here."
-                : 'Already have an account? Login here.'}
-            </Text>
+              Guest
+            </Button>
+            {isLogin ? (
+              <Text
+                textDecoration={'underline'}
+                color={'white'}
+                sx={{ '&:hover': { cursor: 'pointer', opacity: 0.6 } }}
+                fontSize={['0.5rem', '0.5rem', '0.7rem']}
+                onClick={() => {
+                  setPageType(isLogin ? 'register' : 'login');
+                  resetForm();
+                }}
+              >
+                Don't have an account? <Text as={'b'}>Sign Up here</Text>
+              </Text>
+            ) : (
+              <Text
+                textDecoration={'underline'}
+                color={'white'}
+                sx={{ '&:hover': { cursor: 'pointer', opacity: 0.6 } }}
+                fontSize={['0.5rem', '0.5rem', '0.7rem']}
+                onClick={() => {
+                  setPageType(isLogin ? 'register' : 'login');
+                  resetForm();
+                }}
+              >
+                Already have an account?<Text as={'b'}>Login here</Text>
+              </Text>
+            )}
           </VStack>
         </form>
       )}

@@ -29,8 +29,9 @@ const Weather = () => {
         console.log(error);
       }
     };
-
-    getWeatherData();
+    if (location?.latitude) {
+      getWeatherData();
+    }
   }, [location]);
 
   return (

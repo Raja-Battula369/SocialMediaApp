@@ -9,39 +9,75 @@ import {
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { MdOutlinePersonAdd, MdOutlinePersonRemove } from 'react-icons/md';
-import axios from 'axios';
-import { setError, setFriends } from '../../../State/State';
+
 import { Link } from 'react-router-dom';
+import { RouterFetchForGet, RouterFetchForPatch } from '../../../RouterFeatch';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const Friend = ({ friendId, name, subtitle, userPicturePath, userId }) => {
   const dispatch = useDispatch();
   const { colorMode } = useColorMode();
   const token = useSelector((state) => state.token);
-  const { friends, _id } = useSelector((state) => state.user);
+  const { _id } = useSelector((state) => state.user);
 
-  const isFriend = friends.find((friend) => friend._id === friendId);
+  const queryClient = useQueryClient();
 
   const PicturePath = userPicturePath;
 
   const patchFriend = async () => {
-    try {
-      const { data } = await axios.patch(
-        `https://socialmediaapp-9air.onrender.com/users/${friendId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+    FriendAddAndRemoveHandler.mutate();
+  };
+  const FriendAddAndRemoveHandler = useMutation(
+    async () => {
+      try {
+        const data = await RouterFetchForPatch(
+          `/users/${_id}/${friendId}`,
+          '',
+          `Bearer ${token}`
+        );
 
-      dispatch(setFriends({ friends: data }));
+        return data;
+      } catch (error) {
+        dispatch(
+          import('../../../State/State').then((state) =>
+            state.setError({
+              error: error.response.data.message,
+            })
+          )
+        );
+        console.log(error);
+      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['getFriends']);
+        queryClient.invalidateQueries(['getFriendsAgin']);
+      },
+    }
+  );
+  const getFriendsDataHandler = async () => {
+    try {
+      const data = await RouterFetchForGet(`/users/${_id}`, `Bearer ${token}`);
+      return data;
     } catch (error) {
       dispatch(
-        setError({
-          error: error.response.data.message,
-        })
+        import('../../../State/State').then((state) =>
+          state.setError({
+            error: error.response.data.message,
+          })
+        )
       );
     }
   };
+  const { data: friendsInMyList } = useQuery(
+    ['getFriendsAgin'],
+    getFriendsDataHandler
+  );
+  // console.log(friendsInMyList.friends);
+
+  const isFriend = friendsInMyList?.friends?.find((friend) =>
+    friend === friendId ? true : false
+  );
   return (
     <HStack minW="full" justifyContent={'space-between'}>
       <Link to={`/profile/${friendId}`}>

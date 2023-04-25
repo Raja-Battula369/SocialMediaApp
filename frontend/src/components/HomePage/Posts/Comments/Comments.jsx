@@ -19,13 +19,18 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import { MdChatBubbleOutline } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
-import { setError } from '../../../../State/State';
-import Comment from './Comment';
-import Friend from '../../Friends/Friend';
+
+import {
+  RouterFetchForGet,
+  RouterFetchForPatch,
+} from '../../../../RouterFeatch';
+
+const Friend = lazy(() => import('../../Friends/Friend'));
+const Comment = lazy(() => import('./Comment'));
+
 const Comments = ({
   postId,
   name,
@@ -49,21 +54,19 @@ const Comments = ({
     isSetLoad(true);
     const updateMessage = { message: { id: _id, message: msg } };
     try {
-      await axios.patch(
-        `https://socialmediaapp-9air.onrender.com/posts/${postId}/comments`,
+      await RouterFetchForPatch(
+        `/posts/${postId}/comments`,
         updateMessage,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        `Bearer ${token}`
       );
+      isSetLoad(false);
     } catch (error) {
       dispatch(
-        setError({
-          error: error.request.response
-            .split(' ')[0]
-            .split(':')[2]
-            .split(',')[0],
-        })
+        import('../../../../State/State').then((state) =>
+          state.setError({
+            error: error.response.data.message,
+          })
+        )
       );
       console.log(error);
     }
@@ -71,17 +74,22 @@ const Comments = ({
 
   const getComments = async () => {
     try {
-      const { data } = await axios.get(
-        `https://socialmediaapp-9air.onrender.com/posts/${postId}/post`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const data = await RouterFetchForGet(
+        `/posts/${postId}/post`,
+        `Bearer ${token}`
       );
       setComments(data?.comments);
       isSetLoad(false);
       setMsg('');
     } catch (error) {
       isSetLoad(false);
+      dispatch(
+        import('../../../../State/State').then((state) =>
+          state.setError({
+            error: error.response.data.message,
+          })
+        )
+      );
       console.log(error);
     }
   };
@@ -136,9 +144,12 @@ const Comments = ({
                     userId={postUserId}
                   />
                   <Divider />
-                  {[...comments]?.reverse()?.map(({ id, message }, i) => (
-                    <Comment key={i + id} message={message} id={id} />
-                  ))}
+                  {comments &&
+                    [...comments]
+                      ?.reverse()
+                      ?.map(({ id, message }, i) => (
+                        <Comment key={i + id} message={message} id={id} />
+                      ))}
                 </VStack>
                 <HStack m="1rem">
                   <Input

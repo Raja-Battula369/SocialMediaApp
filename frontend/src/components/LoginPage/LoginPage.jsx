@@ -1,10 +1,20 @@
 import { Container, Text, useColorMode, VStack } from '@chakra-ui/react';
 import Form from './Form';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { fallbackRender } from '../Error/ErrorFallback';
 const LoginPage = () => {
   const { colorMode } = useColorMode();
   return (
-    <Container maxW={'full'} p="0">
+    <Container
+      maxW={'full'}
+      p="0"
+      minH={'100vh'}
+      bgPos={'center'}
+      bgRepeat={'no-repeat'}
+      bgSize={'cover'}
+      className="login-card-bg"
+    >
       <Text
         textAlign={'center'}
         py="1rem"
@@ -12,6 +22,8 @@ const LoginPage = () => {
         fontWeight="bold"
         shadow={'md'}
         color={colorMode === 'light' ? '#38e8d3' : '#f0131b'}
+        bgColor={colorMode === 'light' ? 'white' : 'black'}
+        borderRadius={'md'}
       >
         Meta:Mates
       </Text>
@@ -24,11 +36,12 @@ const LoginPage = () => {
           p="1rem"
           borderRadius={'2rem'}
         >
-          <Text fontSize={['0.5rem', '0.5rem', '0.7rem']}>
-            {' '}
+          <Text fontSize={['0.5rem', '0.5rem', '1rem']} color={'white'}>
             Welcome to Meta:Mates, the Social Media for Meta:Mates
           </Text>
-          <Form />
+          <ErrorBoundary fallbackRender={fallbackRender}>
+            <Form />
+          </ErrorBoundary>
         </VStack>
       </VStack>
     </Container>

@@ -1,13 +1,19 @@
-import { Container } from '@chakra-ui/react';
-import React from 'react';
-import Navbar from '../Navbar';
-import Home from './Home';
+import React, { Suspense, lazy } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { fallbackRender } from '../Error/ErrorFallback.jsx';
+import Loading from '../loader/Loading.jsx';
+
+const Home = lazy(() => import('./Home'));
 
 const HomePage = () => {
   return (
     <>
-      <Navbar />
-      <Home />
+      <Suspense fallback={<Loading />}>
+        <ErrorBoundary fallbackRender={fallbackRender}></ErrorBoundary>
+        <ErrorBoundary fallbackRender={fallbackRender}>
+          <Home />
+        </ErrorBoundary>
+      </Suspense>
     </>
   );
 };

@@ -3,25 +3,43 @@ import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-d
 import { useSelector } from 'react-redux';
 import './App.css';
 
-import HomePage from './components/HomePage/HomePage';
-import LoginPage from './components/LoginPage/LoginPage';
-import Profile from './components/ProfilePage/Profile';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { Suspense, lazy } from 'react';
+import Loading from './components/loader/Loading';
 
+const Navbar = lazy(() => import('./components/Navbar'));
+
+const HomePage = lazy(() => import('./components/HomePage/HomePage'))
+const LoginPage = lazy(() => import('./components/LoginPage/LoginPage'))
+const Profile = lazy(() => import('./components/ProfilePage/Profile'))
 function App() {
   const isAuth = Boolean(useSelector((state) => state.token));
 
+  const queryClient = new QueryClient();
+
+
   return (
     <div className="App">
-      <Router ex>
+      <Suspense fallback={<Loading />}>
 
-        <Routes >
-          <Route path='/' element={<LoginPage />} />
-          <Route exact path='/home' element={isAuth ? <HomePage /> : <Navigate to="/" />} />
-          <Route path='/profile/:userId' element={isAuth ? <Profile /> : <Navigate to="/" />} />
+        <Router >
+          {isAuth && (<Navbar />)}
 
-        </Routes>
+          <QueryClientProvider client={queryClient}>
+            <Routes>
 
-      </Router>
+              <Route path='/' element={<LoginPage />} />
+              <Route exact path='/home' element={isAuth ? <HomePage /> : <Navigate to="/" />} />
+              <Route path='/profile/:userId' element={isAuth ? <Profile /> : <Navigate to="/" />} />
+
+            </Routes><ReactQueryDevtools />
+          </QueryClientProvider>
+
+
+        </Router>
+      </Suspense>
+
     </div>
   );
 }

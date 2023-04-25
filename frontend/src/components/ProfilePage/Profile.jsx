@@ -4,181 +4,207 @@ import {
   Button,
   Container,
   Divider,
+  Grid,
   HStack,
   Image,
   Text,
   useColorMode,
   VStack,
 } from '@chakra-ui/react';
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+
+import React, { lazy } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { setError, setFriends } from '../../State/State';
-import Error from '../Error/Error';
-import Navbar from '../Navbar';
+
+import { RouterFetchForGet, RouterFetchForPatch } from '../../RouterFeatch';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+const Error = lazy(() => import('../Error/Error'));
 
 const Profile = () => {
   const { userId } = useParams();
   const dispatch = useDispatch();
-  const [userData, setUserData] = useState([]);
-  const [userPosts, setUserPosts] = useState([]);
-  const [isMyFrnd, setIsMyFrnd] = useState(null);
   const { colorMode } = useColorMode();
   const token = useSelector((state) => state.token);
   const status = useSelector((state) => state.error);
-  const { _id, friends } = useSelector((state) => state.user);
+  const { _id } = useSelector((state) => state.user);
+  const queryClient = useQueryClient();
 
   const getUserData = async () => {
     try {
-      const { data } = await axios.get(
-        `https://socialmediaapp-9air.onrender.com/users/${userId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const data = await RouterFetchForGet(
+        `/users/${userId}`,
+        `Bearer ${token}`
       );
-      await setUserData(data);
+
+      return data;
     } catch (error) {
       dispatch(
-        setError({
-          error: error.response.data.message,
-        })
+        import('../../State/State').then((state) =>
+          state.setError({
+            error: error.response.data.message,
+          })
+        )
       );
     }
   };
   const getUserPosts = async () => {
     try {
-      const { data } = await axios.get(
-        `https://socialmediaapp-9air.onrender.com/posts/${userId}/posts`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const data = await RouterFetchForGet(
+        `/posts/${userId}/posts`,
+        `Bearer ${token}`
       );
-      setUserPosts(data);
+      return data;
     } catch (error) {
       dispatch(
-        setError({
-          error: error.response.data.message,
-        })
+        import('../../State/State').then((state) =>
+          state.setError({
+            error: error.response.data.message,
+          })
+        )
       );
     }
   };
-  const patchFriend = async () => {
-    try {
-      const { data } = await axios.patch(
-        `http://localhost:8001/users/${userId}/${_id}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      dispatch(setFriends({ friends: data }));
-      const isFriend = await data.find((friend) => friend._id === _id);
-      const isFollow = isFriend !== undefined ? true : false;
-      setIsMyFrnd(isFollow);
-    } catch (error) {
-      dispatch(
-        setError({
-          error: error.response.data.message,
-        })
-      );
-    }
+  const patchFriend = () => {
+    PatchFriendHandler.mutate();
   };
 
-  const getFollowData = async () => {
-    const isFriend = await friends.find((friend) => friend._id === userId);
-    const isFollow = isFriend !== undefined ? true : false;
-    setIsMyFrnd(isFollow);
-  };
-  useEffect(() => {
-    getUserData();
-    getUserPosts();
-    getFollowData();
-  }, []);
+  const { data } = useQuery(['personPersonalData'], getUserData);
+  const { data: dataOfPersonPosts } = useQuery(
+    ['personPersonalPosts'],
+    getUserPosts
+  );
+
+  const PatchFriendHandler = useMutation(
+    async () => {
+      try {
+        const data = await RouterFetchForPatch(
+          `/users/${userId}/${_id}`,
+          '',
+          `Bearer ${token}`
+        );
+        return data;
+      } catch (error) {
+        dispatch(
+          import('../../State/State').then((state) =>
+            state.setError({
+              error: error.response.data.message,
+            })
+          )
+        );
+      }
+    },
+    { onSuccess: () => queryClient.invalidateQueries(['personPersonalData']) }
+  );
+
+  const isFriend = data?.friends.find((friend) =>
+    friend === _id ? true : false
+  );
 
   return (
     <Container
       p="0"
       maxW={'full'}
       minH="100vh"
-      bg={colorMode === 'light' ? '#bbecf0' : ''}
+      // bg={colorMode === 'light' ? '#bbecf0' : ''}
+      bgImage={`url(${data?.picturePath})`}
+      bgPos={'center'}
+      bgRepeat={'no-repeat'}
+      bgSize={'cover'}
     >
-      <Navbar />
-      {status ? (
-        <Error />
-      ) : (
-        <>
-          <VStack p="0.4rem" maxW={'full'}>
-            <HStack
-              gap={['0.3rem', '2rem', '5rem']}
-              justifyContent={['flex-start', 'center']}
+      <div className="bg-text">
+        {status ? (
+          <Error />
+        ) : (
+          <>
+            <VStack
+              p="0.4rem"
+              maxW={'full'}
+              bgColor={colorMode === 'light' ? 'white' : 'black'}
+              color={colorMode === 'light' ? 'black' : 'white'}
+              opacity={'0.7'}
             >
-              <Avatar
-                size={['lg', 'xl', '2xl']}
-                src={userData?.picturePath}
-                objectFit={'cover'}
-              />
-              <Box p={['0.5', '1rem']} maxW="full">
-                <HStack gap={['0.5rem', '1rem']}>
-                  <Text>
-                    {userData?.firstName} {userData?.lastName}
-                  </Text>
-                  {_id !== userData._id && (
-                    <Button
-                      title="follow"
-                      appearance={'none'}
-                      size={['sm', 'md']}
-                      fontWeight={'bold'}
-                      onClick={() => patchFriend()}
-                    >
-                      {isMyFrnd ? 'Following' : 'Follow'}
-                    </Button>
-                  )}
-                </HStack>
-                <HStack gap={'1rem'}>
-                  <Text>
-                    <Text as={'b'}>{userPosts.length}</Text> posts
-                  </Text>
+              <HStack
+                gap={['0.3rem', '2rem', '5rem']}
+                justifyContent={['flex-start', 'center']}
+              >
+                <Avatar
+                  size={['lg', 'xl', '2xl']}
+                  src={data?.picturePath}
+                  objectFit={'cover'}
+                />
+                <Box p={['0.5', '1rem']} maxW="full">
+                  <HStack gap={['0.5rem', '1rem']}>
+                    <Text>
+                      {data?.firstName} {data?.lastName}
+                    </Text>
+                    {_id !== data?._id && (
+                      <Button
+                        title="follow"
+                        appearance={'none'}
+                        size={['sm', 'md']}
+                        fontWeight={'bold'}
+                        onClick={() => patchFriend()}
+                      >
+                        {isFriend ? 'Following' : 'Follow'}
+                      </Button>
+                    )}
+                  </HStack>
+                  <HStack gap={'1rem'}>
+                    <Text>
+                      <Text as={'b'}>{dataOfPersonPosts?.length}</Text> posts
+                    </Text>
 
-                  {_id !== userData._id ? (
-                    <>
-                      <Text letterSpacing={1}>
-                        <Text as={'b'}>{friends?.length}</Text> followers
-                      </Text>
-                      <Text letterSpacing={1}>
-                        <Text as={'b'}>{0}</Text> following
-                      </Text>
-                    </>
-                  ) : (
-                    <>
-                      <Text letterSpacing={1}>
-                        <Text as={'b'}>{0}</Text> followers
-                      </Text>
-                      <Text letterSpacing={1}>
-                        <Text as={'b'}>{friends?.length}</Text> following
-                      </Text>
-                    </>
-                  )}
-                </HStack>
-                <Box>
-                  <Text as={'b'}>
-                    {userData.firstName} {userData.lastName}
-                  </Text>
-                  <Text>{userData.occupation}</Text>
+                    {_id !== data?._id ? (
+                      <>
+                        <Text letterSpacing={1}>
+                          <Text as={'b'}>{data?.friends?.length}</Text>{' '}
+                          followers
+                        </Text>
+                        <Text letterSpacing={1}>
+                          <Text as={'b'}>{0}</Text> following
+                        </Text>
+                      </>
+                    ) : (
+                      <>
+                        <Text letterSpacing={1}>
+                          <Text as={'b'}>{0}</Text> followers
+                        </Text>
+                        <Text letterSpacing={1}>
+                          <Text as={'b'}>{data?.friends?.length}</Text>{' '}
+                          following
+                        </Text>
+                      </>
+                    )}
+                  </HStack>
+                  <Box>
+                    <Text as={'b'}>
+                      {data?.firstName} {data?.lastName}
+                    </Text>
+                    <Text>{data?.occupation}</Text>
+                  </Box>
                 </Box>
-              </Box>
-            </HStack>
-            <Divider mx="3rem\" />
-          </VStack>
-          <VStack alignItems={'flex-start'}>
-            <HStack wrap={'wrap'}>
-              {userPosts.map((data, i) => (
+              </HStack>
+              <Divider
+                mx="3rem"
+                border={'2px'}
+                borderRadius={'full'}
+                color={colorMode === 'light' ? 'black' : 'white'}
+              />
+            </VStack>
+
+            <Grid
+              w={'full'}
+              px={'2rem'}
+              gap={'0.4rem'}
+              gridTemplateColumns={'repeat(3,1fr)'}
+            >
+              {dataOfPersonPosts?.map((data, i) => (
                 <Box key={i + data._id}>
                   {data?.picturePath && (
                     <Image
+                      shadow={'md'}
                       alt={data.picturePath}
-                      m="0.4rem"
+                      my={'0.5rem'}
                       boxSize={['7rem', '12rem', '15rem', '18rem']}
                       objectFit="cover"
                       src={data.picturePath}
@@ -186,10 +212,10 @@ const Profile = () => {
                   )}
                 </Box>
               ))}
-            </HStack>
-          </VStack>
-        </>
-      )}
+            </Grid>
+          </>
+        )}
+      </div>
     </Container>
   );
 };

@@ -1,36 +1,34 @@
-import { HStack, Text, VStack } from '@chakra-ui/react';
-import axios from 'axios';
-import React, { useEffect } from 'react';
+import { Text, VStack, useColorMode } from '@chakra-ui/react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setError, setFriends } from '../../../State/State';
 import Friend from './Friend';
+import { RouterFetchForGet } from '../../../RouterFeatch';
+import { useQuery } from '@tanstack/react-query';
 
 const FriendList = ({ userId }) => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
-  const { friends } = useSelector((state) => state.user);
+  const { colorMode } = useColorMode();
+
   const getFriends = async () => {
     try {
-      const { data } = await axios.get(
-        `https://socialmediaapp-9air.onrender.com/users/${userId}/friends`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const data = await RouterFetchForGet(
+        `/users/${userId}/friends`,
+        `Bearer ${token}`
       );
-
-      dispatch(setFriends({ friends: data }));
+      return data;
     } catch (error) {
       dispatch(
-        setError({
-          error: error.response.data.message,
-        })
+        import('../../../State/State').then((state) =>
+          state.setError({
+            error: error.response.data.message,
+          })
+        )
       );
     }
   };
+  const { data } = useQuery(['getFriends'], getFriends);
 
-  useEffect(() => {
-    getFriends();
-  }, []);
   return (
     <VStack
       alignItems={'flex-start'}
@@ -38,9 +36,11 @@ const FriendList = ({ userId }) => {
       shadow="md"
       m="2rem 0.5rem"
       p="1rem"
+      bgColor={colorMode === 'light' ? 'white' : 'black'}
+      borderRadius={'md'}
     >
       <Text as={'b'}>Friend list</Text>
-      {friends.map(
+      {data?.map(
         (friend, i) =>
           friend.firstName !== undefined && (
             <Friend

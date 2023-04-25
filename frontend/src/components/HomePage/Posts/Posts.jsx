@@ -1,31 +1,26 @@
 import { Skeleton } from '@chakra-ui/react';
-import axios from 'axios';
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setPosts } from '../../../State/State';
-import Post from './Post';
+
+import React, { lazy, memo } from 'react';
+import { useSelector } from 'react-redux';
+import { RouterFetchForGet } from '../../../RouterFeatch';
+import { useQuery } from '@tanstack/react-query';
+
+const Post = lazy(() => import('./Post'));
 
 const Posts = () => {
-  const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts);
   const token = useSelector((state) => state.token);
 
   const getPosts = async () => {
-    const { data } = await axios.get(
-      `https://socialmediaapp-9air.onrender.com/posts`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    dispatch(setPosts({ posts: data }));
+    const data = await RouterFetchForGet(`/posts`, `Bearer ${token}`);
+    return data;
   };
 
-  useEffect(() => {
-    getPosts();
-  }, []);
+  const { data } = useQuery(['PostsGet'], getPosts);
+
   return (
     <Skeleton isLoaded={posts}>
-      {posts?.map(
+      {data?.map(
         ({
           _id,
           userId,
@@ -49,7 +44,6 @@ const Posts = () => {
             userPicturePath={userPicturePath}
             likes={likes}
             CommentS={comments}
-            feed={getPosts}
           />
         )
       )}
@@ -57,4 +51,4 @@ const Posts = () => {
   );
 };
 
-export default Posts;
+export default memo(Posts);
