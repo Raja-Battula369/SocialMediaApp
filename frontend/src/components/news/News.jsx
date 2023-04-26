@@ -15,11 +15,28 @@ const News = () => {
   const { colorMode } = useColorMode();
   const toast = useToast();
   const getNews = async () => {
-    const data = await axios.get(
-      'https://newsapi.org/v2/top-headlines?country=in&apiKey=7688240262014795b2f1e7bfa3398426&category=sports&pageSize=40'
-    );
+    const options = {
+      method: 'GET',
+      url: 'https://apidojo-yahoo-finance-v1.p.rapidapi.com/news/list',
+      params: {
+        category: 'generalnews',
+        region: 'IN',
+      },
+      headers: {
+        'content-type': 'application/octet-stream',
+        'X-RapidAPI-Key': '9f28ed6536msh6e36d22ce1844aap1181efjsn647ac1018fbe',
+        'X-RapidAPI-Host': 'apidojo-yahoo-finance-v1.p.rapidapi.com',
+      },
+    };
+    try {
+      const response = await axios.request(options);
+      setNews(response.data.items.result);
+      // console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
 
-    setNews(data.data.articles);
+    // setNews(data.data.articles);
   };
 
   useEffect(() => {
@@ -39,7 +56,7 @@ const News = () => {
       w="100vw"
       p="1rem"
     >
-      {news.map((article, index) => (
+      {news.slice(0, 20).map((article, index) => (
         <Box
           key={index}
           border={'1.5px solid'}
@@ -50,20 +67,20 @@ const News = () => {
           bgColor={colorMode === 'light' ? 'black' : 'white'}
           color={colorMode === 'light' ? 'white' : 'black'}
         >
-          <a href={article.url} target="__black">
+          <a href={article.link} target="__black">
             <Text as={'b'}>{article.title}</Text>
             <Image
               objectFit={'cover'}
               boxSize={'25rem'}
               borderRadius={'20px'}
               shadow={'base'}
-              src={article.urlToImage}
+              src={article.main_image.original_url}
               alt="img"
             />
             <Text textDecor={'underline'} as={'b'}>
               author: {article.author}
             </Text>
-            <Text>{article.description}</Text>
+            <Text>{article.summary}</Text>
           </a>
         </Box>
       ))}
