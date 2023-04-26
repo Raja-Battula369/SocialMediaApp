@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const Url = 'https://backend-pi-ecru.vercel.app';
+const Url = 'https://social-media-qatnrufjs-raja-369.vercel.app';
 //post fetch
 const RouterFetchForPost = async (path, values, headers = '') => {
   const { data } = await axios.post(`${Url}${path}`, values, {
