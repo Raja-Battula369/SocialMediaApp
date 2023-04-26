@@ -4,6 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 
 exports.getUser = catchAsync(async (req, res, next) => {
     const { id } = req.params;
+    console.log(id);
 
     const user = await User.findById(id, { password: 0, email: 0 });
 
