@@ -4,6 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const { AppError } = require('../appError');
 require("dotenv").config();
 const cloudinary = require('cloudinary').v2;
+const sharp = require('sharp');
 
 // Configuration 
 cloudinary.config({
@@ -16,8 +17,9 @@ var picId;
 const handleUpload = async (file) => {
     const random = Math.floor(Math.random() * 10000);
     picId = `${file.filename}+${random}`
+    const sharpImage = sharp(file.path).resize({ width: 800, fit: "contain" });
     try {
-        const res = await cloudinary.uploader.upload(file.path, { public_id: `${file.filename}+${random}` })
+        const res = await cloudinary.uploader.upload(sharpImage, { public_id: `${file.filename}+${random}` })
         return res;
     } catch (err) {
         console.log(err);
