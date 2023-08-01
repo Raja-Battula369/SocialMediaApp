@@ -13,14 +13,28 @@ cloudinary.config({
     api_secret: process.env.API_SECRET,
 });
 // Upload
-const handleUpload = async (file) => {
-    const random = Math.floor(Math.random() * 10000)
-    try {
-        const res = await cloudinary.uploader.upload(file.path, { public_id: `${file.filename}+${random}` })
-        return res;
-    } catch (err) {
-        console.log(err);
-    }
+const handleUpload = (file) => {
+
+    return sharp(file.path)
+        .resize(800, 800)
+        .webp()
+        .toBuffer()
+        .then((data) => {
+            const random = Math.floor(Math.random() * 10000);
+            picId = `${file.filename}+${random}`
+
+            const res = cloudinary.uploader.upload_stream({ public_id: `${file.filename}+${random}` }, (error, result) => {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.info("Upload");
+                    return result.url;
+                }
+            }).end(data);
+
+        }).catch((err) => {
+            console.log(err)
+        });
 
 
 }
@@ -57,13 +71,13 @@ exports.register = catchAsync(async (req, res, next) => {
 
     const salt = await bcrypto.genSalt(12);
     const HashPassword = await bcrypto.hash(password, salt);
-    const cloudRes = await handleUpload(req.file);
+    const cloudRes = handleUpload(req.file).then((response) => response);
     const user = await User.create({
         firstName: firstName,
         lastName: lastName,
         email: email,
         password: HashPassword,
-        picturePath: cloudRes.url,
+        picturePath: cloudRes,
         friends: friends,
         location: location,
         occupation: occupation,

@@ -4,6 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const { AppError } = require('../appError');
 require("dotenv").config();
 const cloudinary = require('cloudinary').v2;
+const sharp = require('sharp');
 
 
 // Configuration 
@@ -14,15 +15,28 @@ cloudinary.config({
 });
 // Upload
 var picId;
-const handleUpload = async (file) => {
-    const random = Math.floor(Math.random() * 10000);
-    picId = `${file.filename}+${random}`
-    try {
-        const res = await cloudinary.uploader.upload(file.path, { public_id: `${file.filename}+${random}` })
-        return res;
-    } catch (err) {
-        console.log(err);
-    }
+const handleUpload = (file) => {
+
+    return sharp(file.path)
+        .resize(800, 800)
+        .webp()
+        .toBuffer()
+        .then((data) => {
+            const random = Math.floor(Math.random() * 10000);
+            picId = `${file.filename}+${random}`
+
+            const res = cloudinary.uploader.upload_stream({ public_id: `${file.filename}+${random}` }, (error, result) => {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.info("Upload");
+                    return result.url;
+                }
+            }).end(data);
+
+        }).catch((err) => {
+            console.log(err)
+        });
 
 
 }
@@ -38,7 +52,7 @@ exports.createPost = catchAsync(async (req, res, next) => {
 
     const { userId, description } = req.body;
 
-    const cloudRes = await handleUpload(req.file);
+    const cloudRes = handleUpload(req.file).then((response) => response);
 
 
     const user = await User.findById(userId);
@@ -50,7 +64,7 @@ exports.createPost = catchAsync(async (req, res, next) => {
         location: user.location,
         description: description,
         userPicturePath: user.picturePath,
-        picturePath: cloudRes.url,
+        picturePath: cloudRes,
         pic_id: picId,
         likes: {},
         comments: []
