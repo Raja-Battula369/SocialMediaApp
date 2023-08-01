@@ -32,10 +32,13 @@ import RouterFetchForPost from '../../RouterFeatch';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import DropzoneComponent from './Drop_Zone';
 
+import { setError } from '../../State/State';
+
 const Weather = lazy(() => import('./Weather'));
 const FriendList = lazy(() => import('./Friends/FriendList'));
 const Posts = lazy(() => import('./Posts/Posts'));
 const Error = lazy(() => import('../Error/Error'));
+
 const Home = () => {
   const dispatch = useDispatch();
   const [isNonMobile] = useMediaQuery('(min-width: 1000px)');
@@ -90,12 +93,11 @@ const Home = () => {
           isClosable: true,
         });
       } catch (error) {
+        console.log(error);
         dispatch(
-          import('../../State/State').then((state) =>
-            state.setError({
-              error: error.response.data.message,
-            })
-          )
+          setError({
+            error: error.response.data.message,
+          })
         );
       }
     },

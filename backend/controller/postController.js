@@ -15,22 +15,25 @@ cloudinary.config({
 });
 // Upload
 var picId;
-const handleUpload = (file) => {
 
-    return sharp(file.path)
-        .resize(800, 800)
+const handleUpload = (file, cb) => {
+
+
+    sharp(file.path)
+        .resize(400, 400)
         .webp()
         .toBuffer()
         .then((data) => {
             const random = Math.floor(Math.random() * 10000);
             picId = `${file.filename}+${random}`
 
-            const res = cloudinary.uploader.upload_stream({ public_id: `${file.filename}+${random}` }, (error, result) => {
+            cloudinary.uploader.upload_stream({ public_id: `${file.filename}+${random}` }, (error, result) => {
                 if (error) {
                     console.log(error);
                 } else {
                     console.info("Upload");
-                    return result.url;
+                    cb(result.url)
+
                 }
             }).end(data);
 
@@ -52,31 +55,35 @@ exports.createPost = catchAsync(async (req, res, next) => {
 
     const { userId, description } = req.body;
 
-    const cloudRes = handleUpload(req.file).then((response) => response);
+    handleUpload(req.file, async (url) => {
+        const user = await User.findById(userId);
+
+        const newPost = await Post.create({
+            userId: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            location: user.location,
+            description: description,
+            userPicturePath: user.picturePath,
+            picturePath: url,
+            pic_id: picId,
+            likes: {},
+            comments: []
+
+        }
+        );
+        if (!newPost) {
+            return next(new AppError('New can not create', 404));
+        };
+
+        const post = await Post.find({ password: 0, email: 0 }).sort({ _id: -1 })
+        res.status(201).json(post)
+
+    });
 
 
-    const user = await User.findById(userId);
 
-    const newPost = await Post.create({
-        userId: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        location: user.location,
-        description: description,
-        userPicturePath: user.picturePath,
-        picturePath: cloudRes,
-        pic_id: picId,
-        likes: {},
-        comments: []
 
-    }
-    );
-    if (!newPost) {
-        return next(new AppError('New can not create', 404));
-    };
-
-    const post = await Post.find({ password: 0, email: 0 }).sort({ _id: -1 })
-    res.status(201).json(post)
 
 });
 
