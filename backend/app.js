@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 const morgan = require('morgan');
-const bodyParser = require('body-parser');
+const bodyParse = require('body-parser');
 const helmet = require('helmet');
 
 const path = require('path');
@@ -27,11 +27,11 @@ const app = express();
 app.use(express.json());
 
 app.use(helmet());
-app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan('common'));
-app.use(bodyParser.json({ limit: '100mb', extended: true }));
-app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
-app.use(cors({ credentials: true, origin: 'https://socialmediaappfrontend-mu.vercel.app' }));
+app.use(bodyParse.json({ limit: '20mb', extended: true }));
+app.use(bodyParse.urlencoded({ limit: "20mb", extended: true }));
+app.use(cors());
 
 app.use('/assets', express.static(path.join(__dirname, '/public/assets')));
 
