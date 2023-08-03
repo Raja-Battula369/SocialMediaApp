@@ -58,9 +58,11 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 0.5em;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.1em;
   margin-left: 0.4rem;
+
+  place-content: center;
 }
 .color {
   font-size: bold;

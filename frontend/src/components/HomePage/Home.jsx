@@ -125,7 +125,10 @@ const Home = () => {
         {status ? (
           <Error />
         ) : (
-          <Grid templateColumns={['', 'repeat(3,1fr)']}>
+          <Grid
+            templateColumns={['1', 'repeat(3,1fr)']}
+            placeContent={'center'}
+          >
             {isNonMobile && (
               <VStack
                 alignItems={'flex-start'}
@@ -160,7 +163,7 @@ const Home = () => {
               </VStack>
             )}
             <VStack
-              w={['90vw', '90vw', '90vw', '50vw']}
+              w={['98vw', '90vw', '90vw', '50vw']}
               maxH="90vh"
               overflowY={'scroll'}
               overflowX="hidden"
