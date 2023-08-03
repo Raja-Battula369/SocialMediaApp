@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import React, { lazy, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import {
   MdDeleteOutline,
   MdFavoriteBorder,
@@ -47,6 +48,22 @@ const Post = ({
 
   const patchLikes = () => {
     PatchLikeHandler.mutate();
+  };
+  const vibrateFunction = () => {
+    if ('vibrate' in navigator) {
+      navigator.vibrate(500);
+    }
+  };
+
+  const handleShare = async () => {
+    const url = `https://social-media-app-gamma-five.vercel.app/profile/${loggedInUserId}`;
+    await navigator.clipboard.writeText(url);
+    toast({
+      title: 'copied',
+      status: 'success',
+      isClosable: true,
+    });
+    await navigator.clipboard.readText();
   };
 
   const PatchLikeHandler = useMutation(
@@ -139,7 +156,10 @@ const Post = ({
             variant={'outline'}
             isRound
             size={'sm'}
-            onClick={patchLikes}
+            onClick={() => {
+              patchLikes();
+              vibrateFunction();
+            }}
             icon={
               isLiked ? <MdOutlineFavorite color="red" /> : <MdFavoriteBorder />
             }
@@ -162,6 +182,7 @@ const Post = ({
           variant={'outline'}
           isRound
           size={'sm'}
+          onClick={handleShare}
           icon={<MdShare />}
         />
         {postUserId === loggedInUserId && (
@@ -170,7 +191,10 @@ const Post = ({
             variant={'outline'}
             isRound
             size={'sm'}
-            onClick={handleDelete}
+            onClick={() => {
+              handleDelete();
+              vibrateFunction();
+            }}
             icon={<MdDeleteOutline />}
           />
         )}

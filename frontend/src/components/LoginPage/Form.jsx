@@ -19,7 +19,8 @@ import { Formik } from 'formik';
 import Dropzone from 'react-dropzone';
 import { MdOutlineModeEdit } from 'react-icons/md';
 import RouterFetchForPost from '../../RouterFeatch';
-import News from '../news/News';
+
+import '../../App.css';
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required('required'),
@@ -158,7 +159,7 @@ const Form = () => {
           setFieldValue,
           resetForm,
         }) => (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="color">
             <VStack gap={'1rem'} shadow="md" p="1rem" className="login-card">
               {isRegister && (
                 <>

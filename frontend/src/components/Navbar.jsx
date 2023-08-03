@@ -3,9 +3,6 @@ import {
   ButtonGroup,
   HStack,
   IconButton,
-  Input,
-  InputGroup,
-  InputRightElement,
   Menu,
   MenuButton,
   MenuItem,
@@ -23,11 +20,11 @@ import {
   MdMenu,
   MdMessage,
   MdNotifications,
-  MdPersonSearch,
 } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setLogout } from '../State/State';
+import Search from './Search';
 
 const Navbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -44,7 +41,7 @@ const Navbar = () => {
     return () => {
       document.removeEventListener('wheel', handleScroll);
     };
-  });
+  }, []);
   return (
     <HStack
       maxW={'full'}
@@ -67,23 +64,7 @@ const Navbar = () => {
       </Text>
       {isNonMobile ? (
         <>
-          <InputGroup maxWidth="15rem">
-            <Input
-              type={'text'}
-              title="search"
-              placeholder="search"
-              appearance={'none'}
-            />
-            <InputRightElement
-              children={
-                <IconButton
-                  title="search"
-                  appearance={'none'}
-                  icon={<MdPersonSearch />}
-                />
-              }
-            />
-          </InputGroup>
+          <Search />
 
           <ButtonGroup title="iconGroup" appearance={'none'} gap={'1rem'}>
             {colorMode === 'light' ? (

@@ -68,6 +68,11 @@ const Home = () => {
       });
     }
   };
+  const vibrateFunction = () => {
+    if ('vibrate' in navigator) {
+      navigator.vibrate(500);
+    }
+  };
 
   //this is react query updata
 
@@ -87,6 +92,7 @@ const Home = () => {
         setPost('');
         setImage(null);
         isSetLoad(false);
+        vibrateFunction();
         toast({
           title: 'Post Uploaded',
           status: 'info',

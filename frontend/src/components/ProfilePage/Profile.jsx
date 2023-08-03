@@ -111,7 +111,7 @@ const Profile = () => {
       bgRepeat={'no-repeat'}
       bgSize={'cover'}
     >
-      <div className="bg-text">
+      <div>
         {status ? (
           <Error />
         ) : (
@@ -121,7 +121,8 @@ const Profile = () => {
               maxW={'full'}
               bgColor={colorMode === 'light' ? 'white' : 'black'}
               color={colorMode === 'light' ? 'black' : 'white'}
-              opacity={'0.7'}
+              // opacity={'0.7'}
+              boxShadow={'md'}
             >
               <HStack
                 gap={['0.3rem', '2rem', '5rem']}
@@ -184,22 +185,11 @@ const Profile = () => {
                   </Box>
                 </Box>
               </HStack>
-              <Divider
-                mx="3rem"
-                border={'2px'}
-                borderRadius={'full'}
-                color={colorMode === 'light' ? 'black' : 'white'}
-              />
             </VStack>
 
-            <Grid
-              w={'full'}
-              px={'2rem'}
-              gap={'0.4rem'}
-              gridTemplateColumns={'repeat(3,1fr)'}
-            >
+            <div className="grid">
               {dataOfPersonPosts?.map((data, i) => (
-                <Box key={i + data._id}>
+                <Box margin={'1rem'} key={i + data._id}>
                   {data?.picturePath && (
                     <Image
                       shadow={'md'}
@@ -212,7 +202,7 @@ const Profile = () => {
                   )}
                 </Box>
               ))}
-            </Grid>
+            </div>
           </>
         )}
       </div>

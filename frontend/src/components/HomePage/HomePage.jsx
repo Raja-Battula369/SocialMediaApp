@@ -9,7 +9,6 @@ const HomePage = () => {
   return (
     <>
       <Suspense fallback={<Loading />}>
-        <ErrorBoundary fallbackRender={fallbackRender}></ErrorBoundary>
         <ErrorBoundary fallbackRender={fallbackRender}>
           <Home />
         </ErrorBoundary>
