@@ -56,7 +56,7 @@ const Post = ({
   };
 
   const handleShare = async () => {
-    const url = `https://social-media-app-gamma-five.vercel.app/profile/${postId}`;
+    const url = `https://social-media-app-gamma-five.vercel.app/profile/${postUserId}`;
     await navigator.clipboard.writeText(url);
     toast({
       title: 'copied',
