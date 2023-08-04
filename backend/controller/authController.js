@@ -5,6 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const { AppError } = require('../appError');
 require("dotenv").config();
 const cloudinary = require('cloudinary').v2;
+const sharp = require('sharp')
 
 // Configuration 
 cloudinary.config({
