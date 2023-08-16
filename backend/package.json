@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
-    "build": "npm install"
+    "start": "node index.js",
+    "build": "npm install",
+    "dev": "nodemon index.js"
   },
   "author": "Raja B",
   "license": "ISC",
