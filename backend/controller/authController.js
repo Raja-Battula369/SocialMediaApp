@@ -35,9 +35,9 @@ exports.register = catchAsync(async (req, res, next) => {
 
     const { firstName, lastName, email, password, friends, location, occupation, picture } = req.body
 
-    const salt = await bcrypto.genSalt(12);
+    const salt = await bcrypto.genSalt(10);
     const HashPassword = await bcrypto.hash(password, salt);
-
+    console.log(HashPassword);
     const user = await User.create({
         firstName: firstName,
         lastName: lastName,
