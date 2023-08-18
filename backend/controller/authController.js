@@ -1,4 +1,4 @@
-const bcrypto = require('bcrypt');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
@@ -35,14 +35,17 @@ exports.register = catchAsync(async (req, res, next) => {
 
     const { firstName, lastName, email, password, friends, location, occupation, picture } = req.body
 
-    const salt = await bcrypto.genSalt(10);
-    const HashPassword = await bcrypto.hash(password, salt);
-    console.log(HashPassword);
+    // const salt = await bcrypto.genSalt(10);
+    // const HashPassword = await bcrypto.hash(password, salt);
+    const saltRounds = 10
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hash = bcrypt.hashSync(password, salt);
+
     const user = await User.create({
         firstName: firstName,
         lastName: lastName,
         email: email,
-        password: HashPassword,
+        password: hash,
         picturePath: picture,
         friends: friends,
         location: location,
@@ -63,7 +66,7 @@ exports.login = catchAsync(async (req, res, next) => {
     }
 
     const user = await User.findOne({ email });
-    if (!user || ! await bcrypto.compare(password, user.password)) {
+    if (!user || ! await bcrypt.compare(password, user.password)) {
         return next(new AppError('Incorrect email or password', 401));
     };
     createToken(user, 200, res);

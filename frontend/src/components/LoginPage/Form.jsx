@@ -66,16 +66,9 @@ const Form = () => {
   const isLogin = pageType === 'login';
   const isRegister = pageType === 'register';
   const registerPage = async (values, onSubmitProps) => {
-    const formData = new FormData();
-
-    for (let value in values) {
-      formData.append(value, values[value]);
-    }
-    // formData.append('picturePath', values.picture);
-
     try {
       setIsLoading(true);
-      const data = await RouterFetchForPost('/auth/register', formData);
+      const data = await RouterFetchForPost('/auth/register', values);
       onSubmitProps.resetForm();
       setIsLoading(false);
       if (data) setPageType('login');
@@ -95,7 +88,7 @@ const Form = () => {
         duration: 10000,
       });
       setIsLoading(true);
-      console.log(values);
+
       const data = await RouterFetchForPost('/auth/login', values);
 
       dispatch(setError({ error: '' }));
