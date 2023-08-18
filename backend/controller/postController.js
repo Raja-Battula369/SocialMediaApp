@@ -3,87 +3,35 @@ const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const { AppError } = require('../appError');
 require("dotenv").config();
-const cloudinary = require('cloudinary').v2;
-const sharp = require('sharp');
 
-
-// Configuration 
-cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.API_KEY,
-    api_secret: process.env.API_SECRET,
-});
-// Upload
-var picId;
-
-const handleUpload = (file, cb) => {
-
-
-    sharp(file.path)
-        .resize(400, 400)
-        .webp()
-        .toBuffer()
-        .then((data) => {
-            const random = Math.floor(Math.random() * 10000);
-            picId = `${file.filename}+${random}`
-
-            cloudinary.uploader.upload_stream({ public_id: `${file.filename}+${random}` }, (error, result) => {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.info("Upload");
-                    cb(result.url)
-
-                }
-            }).end(data);
-
-        }).catch((err) => {
-            console.log(err)
-        });
-
-
-}
-
-//cloudinary uploaded file delete 
-const handleUploadedFileDel = async (file) => {
-    cloudinary.uploader.destroy(file.pic_id, function (error, result) {
-        console.log(result, error);
-    });
-}
 
 exports.createPost = catchAsync(async (req, res, next) => {
 
-    const { userId, description } = req.body;
-
-    handleUpload(req.file, async (url) => {
-        const user = await User.findById(userId);
-
-        const newPost = await Post.create({
-            userId: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            location: user.location,
-            description: description,
-            userPicturePath: user.picturePath,
-            picturePath: url,
-            pic_id: picId,
-            likes: {},
-            comments: []
-
-        }
-        );
-        if (!newPost) {
-            return next(new AppError('New can not create', 404));
-        };
-
-        const post = await Post.find({ password: 0, email: 0 }).sort({ _id: -1 })
-        res.status(201).json(post)
-
-    });
+    const { userId, description, picture } = req.body;
+    console.log(req.body);
 
 
+    const user = await User.findById(userId);
 
+    const newPost = await Post.create({
+        userId: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        location: user.location,
+        description: description,
+        userPicturePath: user.picturePath,
+        picturePath: picture,
+        likes: {},
+        comments: []
 
+    }
+    );
+    if (!newPost) {
+        return next(new AppError('New can not create', 404));
+    };
+
+    const post = await Post.find({ password: 0, email: 0 }).sort({ _id: -1 })
+    res.status(201).json(post)
 
 });
 

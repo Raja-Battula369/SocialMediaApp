@@ -4,41 +4,6 @@ const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const { AppError } = require('../appError');
 require("dotenv").config();
-const cloudinary = require('cloudinary').v2;
-const sharp = require('sharp')
-
-// Configuration 
-cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.API_KEY,
-    api_secret: process.env.API_SECRET,
-});
-// Upload
-const handleUpload = (file, cb) => {
-
-    return sharp(file.path)
-        .resize(800, 800)
-        .webp()
-        .toBuffer()
-        .then((data) => {
-            const random = Math.floor(Math.random() * 10000);
-            picId = `${file.filename}+${random}`
-
-            const res = cloudinary.uploader.upload_stream({ public_id: `${file.filename}+${random}` }, (error, result) => {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.info("Upload");
-                    cb(result.url);
-                }
-            }).end(data);
-
-        }).catch((err) => {
-            console.log(err)
-        });
-
-
-}
 
 
 const signToken = id => {
@@ -68,27 +33,26 @@ const createToken = (user, statusCode, res) => {
 }
 exports.register = catchAsync(async (req, res, next) => {
 
-    const { firstName, lastName, email, password, friends, location, occupation, } = req.body
+    const { firstName, lastName, email, password, friends, location, occupation, picture } = req.body
 
     const salt = await bcrypto.genSalt(12);
     const HashPassword = await bcrypto.hash(password, salt);
-    handleUpload(req.file, async (url) => {
-        const user = await User.create({
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            password: HashPassword,
-            picturePath: url,
-            friends: friends,
-            location: location,
-            occupation: occupation,
-            viewedProfile: Math.floor(Math.random() * 10000),
-            impressions: Math.floor(Math.random() * 10000)
-        });
 
-        createToken(user, 201, res);
+    const user = await User.create({
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: HashPassword,
+        picturePath: picture,
+        friends: friends,
+        location: location,
+        occupation: occupation,
+
     });
+
+    createToken(user, 201, res);
 });
+
 
 exports.login = catchAsync(async (req, res, next) => {
 

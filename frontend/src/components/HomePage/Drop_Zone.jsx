@@ -2,17 +2,28 @@ import { Box, HStack, IconButton, Text } from '@chakra-ui/react';
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { MdDeleteOutline, MdOutlineModeEdit } from 'react-icons/md';
-
-function DropzoneComponent({ image, setImage }) {
-  const onDrop = useCallback((acceptedFiles) => {
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { storage } from '../../firebase';
+import { v4 } from 'uuid';
+function DropzoneComponent({ image, setImage, preview, setPreview }) {
+  const onDrop = useCallback(async (acceptedFiles) => {
     // Do something with the files
-    setImage(acceptedFiles[0]);
+
+    const preview = URL.createObjectURL(acceptedFiles[0]);
+    const imageRef = ref(storage, `images/${acceptedFiles[0].name + v4()}`);
+    uploadBytes(imageRef, acceptedFiles[0])
+      .then((data) => {
+        getDownloadURL(data.ref).then((url) => setImage(url));
+      })
+      .catch((er) => console.log(er));
+    setPreview(preview);
+
+    // console.log(acceptedFiles[0]);
   }, []);
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: { 'image/*': [] },
   });
-
   return (
     <Box w="full" {...getRootProps()}>
       <input {...getInputProps()} />
@@ -24,7 +35,8 @@ function DropzoneComponent({ image, setImage }) {
           </>
         ) : (
           <>
-            <Text>{image?.name}</Text>
+            <img src={preview} height={74} width={204} alt="preview" />
+
             <IconButton
               title="deleteImg"
               appearance={'none'}

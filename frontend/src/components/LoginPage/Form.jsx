@@ -21,6 +21,9 @@ import { MdOutlineModeEdit } from 'react-icons/md';
 import RouterFetchForPost from '../../RouterFeatch';
 
 import '../../App.css';
+import { storage } from '../../firebase';
+import { v4 } from 'uuid';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required('required'),
@@ -56,6 +59,7 @@ const Form = () => {
   const [loginError, setLoginError] = useState('');
   const [pageType, setPageType] = useState('login');
   const [isLoading, setIsLoading] = useState(false);
+  const [preview, setPreview] = useState('');
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -91,6 +95,7 @@ const Form = () => {
         duration: 10000,
       });
       setIsLoading(true);
+      console.log(values);
       const data = await RouterFetchForPost('/auth/login', values);
 
       dispatch(setError({ error: '' }));
@@ -240,9 +245,21 @@ const Form = () => {
                       acceptedFiles=".jpg,.jpeg,.png"
                       multiple={false}
                       accept={{ 'image/*': [] }}
-                      onDrop={(acceptedFiles) =>
-                        setFieldValue('picture', acceptedFiles[0])
-                      }
+                      onDrop={async (acceptedFiles) => {
+                        const preview = URL.createObjectURL(acceptedFiles[0]);
+                        const imageRef = ref(
+                          storage,
+                          `images/${acceptedFiles[0].name + v4()}`
+                        );
+                        await uploadBytes(imageRef, acceptedFiles[0])
+                          .then((data) => {
+                            getDownloadURL(data.ref).then((url) =>
+                              setFieldValue('picture', url)
+                            );
+                          })
+                          .catch((er) => console.log(er));
+                        setPreview(preview);
+                      }}
                     >
                       {({ getRootProps, getInputProps }) => (
                         <Box
@@ -252,6 +269,14 @@ const Form = () => {
                           p="1rem"
                           sx={{ '&:hover': { cursor: 'pointer' } }}
                         >
+                          {preview && (
+                            <img
+                              src={preview}
+                              alt={'preview'}
+                              width={40}
+                              height={40}
+                            />
+                          )}
                           <input
                             type="file"
                             accept="image/apng, image/jpg, image/gif, image/jpeg, image/png, image/svg+xml, image/webp"

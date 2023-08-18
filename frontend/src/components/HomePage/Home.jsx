@@ -46,6 +46,8 @@ const Home = () => {
   const [isImage, isSetImage] = useState(false);
   const [post, setPost] = useState('');
   const [isLoad, isSetLoad] = useState(false);
+  const [preview, setPreview] = useState('');
+
   const toast = useToast();
 
   const { _id, picturePath } = useSelector((state) => state.user);
@@ -79,16 +81,16 @@ const Home = () => {
   const CreatePostHandler = useMutation(
     async () => {
       isSetLoad(true);
+      // const formData = new FormData();
 
-      const formData = new FormData();
-      formData.append('userId', _id);
-      formData.append('description', post);
-      if (image) {
-        formData.append('picture', image);
-        formData.append('picturePath', image.name);
-      }
+      const uploadPic = {
+        userId: _id,
+        description: post,
+        picture: image,
+      };
+
       try {
-        await RouterFetchForPost('/posts', formData, `Bearer ${token}`);
+        await RouterFetchForPost('/posts', uploadPic, `Bearer ${token}`);
         setPost('');
         setImage(null);
         isSetLoad(false);
@@ -202,38 +204,15 @@ const Home = () => {
                     border={'2px solid grey'}
                     borderRadius=".5rem"
                   >
-                    {/* <Dropzone
-                      acceptedFiles=".jpg,.jpeg,.png"
-                  
-                      multiple={false}
-                      onDrop={(acceptedFiles) => setImage(acceptedFiles[0])}
-                    >
-                      {({ getRootProps, getInputProps }) => (
-                        <Box
-                          w={image ? '80%' : 'full'}
-                          {...getRootProps()}
-                          border={'2px dashed grey'}
-                          p="1rem"
-                          sx={{ '&:hover': { cursor: 'pointer' } }}
-                        >
-                          <Input type="file" {...getInputProps()} />
-                          <HStack justifyContent={'space-between'}>
-                            {!image ? (
-                              <Text fontSize={'small'}>Add Image</Text>
-                            ) : (
-                              <Text noOfLines={1} fontSize={'small'}>
-                                {image.name}
-                              </Text>
-                            )}
-                            <MdOutlineModeEdit />
-                          </HStack>
-                        </Box>
-                      )}
-                    </Dropzone> */}
-                    <DropzoneComponent image={image} setImage={setImage} />
+                    <DropzoneComponent
+                      setPreview={setPreview}
+                      preview={preview}
+                      image={image}
+                      setImage={setImage}
+                    />
                   </HStack>
                 )}
-                ;
+
                 <Divider mx="1rem" />
                 <HStack gap="0.7rem" maxW="full">
                   <HStack
