@@ -21,6 +21,7 @@ import {
   RouterFetchForPatch,
 } from '../../../RouterFeatch';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { setError } from '../../../State/State';
 
 const Friend = lazy(() => import('../Friends/Friend'));
 const Comments = lazy(() => import('./Comments/Comments'));
@@ -113,11 +114,9 @@ const Post = ({
         return data;
       } catch (error) {
         dispatch(
-          import('../../../State/State').then((state) =>
-            state.setError({
-              error: error.response.data.message,
-            })
-          )
+          setError({
+            error: error.response.data.message,
+          })
         );
       }
     },

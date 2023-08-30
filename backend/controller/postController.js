@@ -96,7 +96,7 @@ exports.deletePost = catchAsync(async (req, res, next) => {
     const { id } = req.params;
     const post_id = await Post.findById(id, { pic_id: 1 });
     await Post.findByIdAndDelete(id);
-    await handleUploadedFileDel(post_id);
+
 
     const post = await Post.find().sort({ _id: -1 })
     res.status(200).json(post);
